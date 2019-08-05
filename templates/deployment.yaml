@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "service.name" . }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "service.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "service.name" . }}
+    spec:
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ include "service.name" . }}-secret
+            items:
+              - key: keystore.p12
+                path: keystore.p12
+      containers:
+        - name: {{ include "service.name" . }}
+          image: {{ include "image.url" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "service.name" . }}-secret
+                  key: password
+            - name: AWS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "service.name" . }}-secret
+                  key: aws.accesskey
+            - name: AWS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "service.name" . }}-secret
+                  key: aws.secretkey
+          ports:
+            - containerPort: {{ .Values.connection.https.port }}
+              name: https
+              protocol: TCP
+          volumeMounts:
+            - name: secrets
+              mountPath: /etc/secrets
+              readOnly: true

@@ -1,0 +1,53 @@
+# Default values for viper-aws-helm-service.
+
+#-------------------------------#
+# deployment.yaml value section #
+#-------------------------------#
+
+replicas: 2
+
+image:
+  repository:
+  tag: latest
+  pullPolicy: Always
+
+connection:
+  https:
+    port: 443
+
+
+
+#-------------------------------#
+# ingress.yaml value section    #
+#-------------------------------#
+
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+  path: /
+  hosts:
+  servicePort: 443
+
+
+
+#-------------------------------#
+# service.yaml value section    #
+#-------------------------------#
+
+service:
+  spec:
+    type: ClusterIP
+    ports:
+      https: 443
+      targetPort: 443
+
+
+
+#---------------------------------------#
+# secret.yaml value section    #
+#---------------------------------------#
+secret:
+    keystore:
+    password:
+    aws_accesskey:
+    aws_secretkey:
