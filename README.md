@@ -36,8 +36,12 @@ The chart can be executed with following parameters:
 | image.name                    | The name of the image to deploy to the AWS ECR repository. Usually the name of the service is used as image name. Note that a repository with proper repo url and image name need to be created in AWS ECR before. | `my-service` |
 | secret.keystore               | A default TLS enabled Spring Boot microservice will need a valid keystore file for gathering cert and key references. Make sure to provide a `base64` encoded value. | KEYSTORE = echo -n <KEYSTORE_FILE> &#124;base64)   |
 | secret.password               | The keystore password retrieved when generating the keystore file. | `some secret password` |
+| secret.ui_crt                 | When deploying a UI microservice a certificate is needed for Nginx TLS support. | Enter a valid certificate as helm argument with name `ui.crt` |
+| secret.ui_key                 | When deploying a UI microservice a certificate key is needed for Nginx TLS support. | Enter a valid certificate key as helm argument with name `ui.key` |
 | secret.secret.aws_accesskey   | It might be necessary to additionally pass the AWS Access Key when using internal AWS services from within your application.  |  AWS Access Key generated for your user  |
 | secret.secret.aws_secretkey   | It might be necessary to additionally pass the AWS Secret Key when using internal AWS services from within your application.  |  AWS Secret Key generated for your user  |
 | ingress.hosts                 | A valid DNS name for exposing an ingress route for public access. | `my-service.demo.com` |
+| project.type                  | The type of project to be deployed. | Valid values are either `ui` or `backend` |
+| project.includeAwsCredentials | If AWS credentials need to be provided for using other AWS services internally set this flag to `true`. When set to `true` then `secret.secret.aws_accesskey` and `secret.secret.aws_secretkey` need to be provided as well. | `true` if AWS credentials should be included, `false` is the default.|
 
 In order to configure your service to work properly with this chart have a look at [how to deploy a viper service on AWS](https://github.com/visual-perceptibility/viper-service-remote-collab-admin/blob/master/README.md).
