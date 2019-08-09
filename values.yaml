@@ -1,5 +1,10 @@
 # Default values for viper based services
 
+#possible values are ui and backend
+project:
+  type: ui
+  includeAwsCredentials: false
+
 #-------------------------------#
 # deployment.yaml value section #
 #-------------------------------#
@@ -43,11 +48,13 @@ service:
 
 
 
-#---------------------------------------#
-# secret.yaml value section    #
-#---------------------------------------#
+#-------------------------------#
+# secret.yaml value section     #
+#-------------------------------#
 secret:
-    keystore:
-    password:
     aws_accesskey:
     aws_secretkey:
+    keystore:
+    password:
+    ui_crt:
+    ui_key:

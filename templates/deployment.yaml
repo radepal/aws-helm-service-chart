@@ -16,19 +16,24 @@ spec:
         - name: secrets
           secret:
             secretName: {{ include "service.name" . }}-secret
+            {{- if eq .Values.project.type "backend" }}
             items:
               - key: keystore.p12
                 path: keystore.p12
+            {{- end}}
       containers:
         - name: {{ include "service.name" . }}
           image: {{ include "image.url" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            {{- if eq .Values.project.type "backend"  }}
             - name: KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: password
+            {{- end}}
+            {{- if .Values.project.includeAwsCredentials }}
             - name: AWS_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
@@ -39,11 +44,17 @@ spec:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.secretkey
+            {{- end}}
           ports:
             - containerPort: {{ .Values.connection.https.port }}
               name: https
               protocol: TCP
           volumeMounts:
             - name: secrets
+              {{- if eq .Values.project.type "backend"  }}
               mountPath: /etc/secrets
+              {{- end}}
+              {{- if eq .Values.project.type "ui"  }}
+              mountPath: /etc/nginx/ssl
+              {{- end}}
               readOnly: true
