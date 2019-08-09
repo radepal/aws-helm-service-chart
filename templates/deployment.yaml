@@ -33,6 +33,7 @@ spec:
                   name: {{ include "service.name" . }}-secret
                   key: password
             {{- end}}
+            {{- if .Values.project.includeAwsCredentials }}
             - name: AWS_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
@@ -43,6 +44,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.secretkey
+            {{- end}}
           ports:
             - containerPort: {{ .Values.connection.https.port }}
               name: https
