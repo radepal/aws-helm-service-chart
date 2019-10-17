@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "service.name" . }}
+  namespace: {{ .Values.namespace.name }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:
@@ -12,49 +13,32 @@ spec:
       labels:
         app: {{ include "service.name" . }}
     spec:
-      volumes:
-        - name: secrets
-          secret:
-            secretName: {{ include "service.name" . }}-secret
-            {{- if eq .Values.project.type "backend" }}
-            items:
-              - key: keystore.p12
-                path: keystore.p12
-            {{- end}}
+      imagePullSecrets:
+        - name: aws-ecr-secret
       containers:
         - name: {{ include "service.name" . }}
           image: {{ include "image.url" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- if eq .Values.project.type "backend"  }}
-            - name: KEYSTORE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "service.name" . }}-secret
-                  key: password
-            {{- end}}
             {{- if .Values.project.includeAwsCredentials }}
-            - name: AWS_ACCESS_KEY
+            - name: amazon.aws.accesskey
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.accesskey
-            - name: AWS_SECRET_KEY
+            - name: amazon.aws.secretkey
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.secretkey
             {{- end}}
           ports:
-            - containerPort: {{ .Values.connection.https.port }}
-              name: https
+            - containerPort: {{ .Values.connection.http.port }}
+              name: http
               protocol: TCP
+          {{- if eq .Values.project.type "ui"  }}
           volumeMounts:
             - name: secrets
-              {{- if eq .Values.project.type "backend"  }}
-              mountPath: /etc/secrets
-              {{- end}}
-              {{- if eq .Values.project.type "ui"  }}
               mountPath: /etc/nginx/ssl
-              {{- end}}
               readOnly: true
+          {{- end}}
