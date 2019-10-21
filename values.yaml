@@ -2,7 +2,6 @@
 
 #possible values are ui and backend
 project:
-  type: ui
   includeAwsCredentials: false
 
 #-------------------------------#
