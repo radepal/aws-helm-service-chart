@@ -21,12 +21,12 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             {{- if .Values.project.includeAwsCredentials }}
-            - name: amazon.aws.accesskey
+            - name: AWS_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.accesskey
-            - name: amazon.aws.secretkey
+            - name: AWS_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
