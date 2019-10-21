@@ -36,9 +36,3 @@ spec:
             - containerPort: {{ .Values.connection.http.port }}
               name: http
               protocol: TCP
-          {{- if eq .Values.project.type "ui"  }}
-          volumeMounts:
-            - name: secrets
-              mountPath: /etc/nginx/ssl
-              readOnly: true
-          {{- end}}
