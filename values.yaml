@@ -1,4 +1,4 @@
-# Default values for viper based services
+# Values for default microservice projects
 
 #possible values are ui and backend
 project:
