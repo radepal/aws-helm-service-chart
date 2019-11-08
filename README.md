@@ -1,7 +1,7 @@
-# viper-aws-helm-service-chart
+# aws-helm-service-chart
 
-This chart facilitats the deployment of viper based microservices. The chart supports the deployment of backend (Spring Boot) services as well as
-ui based services (vue).
+This chart facilitats the deployment of sample microservice projects. The chart supports the deployment of backend (Spring Boot) services as well as
+ui based services (vue). Note that as of now there are no external dependencies added.
 
 ## Install the chart
 
@@ -32,14 +32,14 @@ The chart can be executed with following parameters:
 
 | Parameter                     | Description   | Example  |
 | :---------------------------- |:--------------| :-----   |
-| image.repository              | The name of the AWS ECR image repository to deploy artifacts to. The repository url needs to be provided in the following form: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<REPOSITORY_NAME> | `111122223333.dkr.ecr.eu-west-1.amazonaws.com/viper` |
+| image.repository              | The name of the AWS ECR image repository to deploy artifacts to. The repository url needs to be provided in the following form: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<REPOSITORY_NAME> | `111122223333.dkr.ecr.eu-west-1.amazonaws.com/my-repo` |
 | ingress.host                  | A valid DNS name for exposing an ingress route for public access. | `my-service.demo.com` |
 | project.includeAwsCredentials | If AWS credentials need to be provided for using other AWS services internally set this flag to `true`. When set to `true` then `secret.aws_accesskey` and `secret.aws_secretkey` need to be provided as well. | `true` if AWS credentials should be included, `false` is the default.|
 | secret.aws_accesskey          | It might be necessary to additionally pass the AWS Access Key when using internal AWS services from within your application.  |  AWS Access Key generated for your user  |
 | secret.aws_secretkey          | It might be necessary to additionally pass the AWS Secret Key when using internal AWS services from within your application.  |  AWS Secret Key generated for your user  |
 | namespace.name                | The name of an existing namespace the service should be deployed to. | `default` |
 
-In order to configure your service to work properly with this chart have a look at [how to deploy a viper service on AWS](https://github.com/visual-perceptibility/viper-service-admin/blob/master/README.md).
+In order to configure your service to work properly with this chart have a look at [sample deployment on AWS](https://github.com/remote-collab/remote-collab-sample-ui/blob/master/README.md).                                                                                                                    
 
 ## Upload the chart to the chart repository
 
@@ -49,5 +49,5 @@ In order to configure your service to work properly with this chart have a look 
 
 3. Push the newly packaged jar to your chart repo
     ```
-    helm s3 push viper-aws-helm-service-chart-1.2.2.tgz <CHART_REPO>
+    helm s3 push aws-helm-service-chart-1.2.2.tgz <CHART_REPO>
     ```
