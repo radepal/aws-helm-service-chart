@@ -19,7 +19,13 @@ connection:
   http:
     port: 8080
 
-
+resources:
+  limits:
+    cpu:
+    memory:
+  requests:
+    cpu:
+    memory:
 
 #-------------------------------#
 # ingress.yaml value section    #

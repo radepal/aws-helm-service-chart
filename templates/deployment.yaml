@@ -32,6 +32,13 @@ spec:
                   name: {{ include "service.name" . }}-secret
                   key: aws.secretkey
             {{- end}}
+          resources:
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
           ports:
             - containerPort: {{ .Values.connection.http.port }}
               name: http
