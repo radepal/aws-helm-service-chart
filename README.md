@@ -38,8 +38,13 @@ The chart can be executed with following parameters:
 | secret.aws_accesskey          | It might be necessary to additionally pass the AWS Access Key when using internal AWS services from within your application.  |  AWS Access Key generated for your user  |
 | secret.aws_secretkey          | It might be necessary to additionally pass the AWS Secret Key when using internal AWS services from within your application.  |  AWS Secret Key generated for your user  |
 | namespace.name                | The name of an existing namespace the service should be deployed to. | `default` |
+| resources.limits.cpu          | Total amount of CPU time that a container can use every 100 ms. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage.| `1000m` |
+| resources.limits.memory       | The memory limit for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `512M` |
+| resources.requests.cpu        | Fractional amount of CPU allowed for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage.| `250m` |
+| resources.requests.memory     | Amount of memory reserved for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `256M` |
 
-In order to configure your service to work properly with this chart have a look at [sample deployment on AWS](https://github.com/remote-collab/remote-collab-sample-ui/blob/master/README.md).                                                                                                                    
+In order to configure your service to work properly with this chart have a look at [sample deployment on AWS](https://github.com/remote-collab/remote-collab-sample-ui/blob/master/README.md).
+                                                                                                                  
 
 ## Upload the chart to the chart repository
 
