@@ -2,20 +2,32 @@
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
-  name: {{ .Values.tls.issuer.name }}
+  name: letsencrypt-staging
   namespace: {{ .Values.namespace.name }}
 spec:
-  selfSigned: {}
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: app-factory.support@list.bmw.com
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+      - http01:
+          ingress:
+            class: {{ .Values.ingress.class }}
 
 ---
 apiVersion: cert-manager.io/v1alpha2
-kind: Certificate
+kind: Issuer
 metadata:
-  name: selfsigned-cert
+  name: letsencrypt-prod
   namespace: {{ .Values.namespace.name }}
 spec:
-  dnsNames:
-    - {{ .Values.ingress.host | quote }}
-  secretName: {{ .Values.tls.cert.secret_name }}
-  issuerRef:
-    name: {{ .Values.tls.issuer.name }}
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: app-factory.support@list.bmw.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            class: {{ .Values.ingress.class }}

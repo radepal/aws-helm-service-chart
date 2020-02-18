@@ -69,9 +69,9 @@ secret:
 #-------------------------------------#
 tls:
   issuer:
-    name: selfsigned-issuer
+    name: letsencrypt-prod
   cert:
-    secret_name: selfsigned-cert-tls
+    secret_name: service-cert-tls
 
 #----------------------------------#
 # namespace.yaml value section     #
