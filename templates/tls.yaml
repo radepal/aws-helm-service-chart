@@ -3,11 +3,11 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
   name: letsencrypt-staging
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: app-factory.support@list.bmw.com
+    email: {{ .Values.tls.issuer.spec.acme.email }}
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:
@@ -20,11 +20,11 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
   name: letsencrypt-prod
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: app-factory.support@list.bmw.com
+    email: {{ .Values.tls.issuer.spec.acme.email }}
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:

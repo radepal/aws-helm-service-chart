@@ -9,5 +9,5 @@ To learn more about the release, try:
 
 Use curl to test your service endpoint:
 
-  export URL=$(kubectl get ingress {{ include "service.name" . }}-ing -o jsonpath='{.spec.rules[0].host}' -n {{ .Values.namespace.name }})
+  export URL=$(kubectl get ingress {{ include "service.name" . }}-ing -o jsonpath='{.spec.rules[0].host}' -n {{ .Release.Namespace }})
   eval $(echo "curl -k https://$URL/api/v1/status")
