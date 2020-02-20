@@ -21,11 +21,31 @@ connection:
 
 resources:
   limits:
-    cpu:
-    memory:
+    cpu: 200m
+    memory: 235M
   requests:
-    cpu:
-    memory:
+    cpu: 150m
+    memory: 200M
+
+containers:
+  readinessProbe:
+    httpGet:
+      path:
+
+#--------------------------------#
+# autoscaling.yaml value section #
+#--------------------------------#
+
+autoscaling:
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    resource:
+      cpu:
+        targetAverageUtilization: 80
+      #memory:
+      #  targetAverageUtilization: 90
+        #targetAverageValue: 200Mi
 
 #-------------------------------#
 # ingress.yaml value section    #
@@ -40,8 +60,6 @@ ingress:
   host:
   servicePort: 8080
 
-
-
 #-------------------------------#
 # service.yaml value section    #
 #-------------------------------#
@@ -53,16 +71,12 @@ service:
       http: 8080
       targetPort: 8080
 
-
-
 #-------------------------------#
 # secret.yaml value section     #
 #-------------------------------#
 secret:
     aws_accesskey:
     aws_secretkey:
-    ui_crt:
-    ui_key:
 
 #-------------------------------------#
 # tls.yaml/ingress.yaml value section #
@@ -70,11 +84,8 @@ secret:
 tls:
   issuer:
     name: letsencrypt-prod
+    spec:
+      acme:
+        email:
   cert:
     secret_name: service-cert-tls
-
-#----------------------------------#
-# namespace.yaml value section     #
-#----------------------------------#
-namespace:
-  name:
