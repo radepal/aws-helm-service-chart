@@ -8,9 +8,8 @@ exposed as docker container.
 2. The docker image must be able to be pulled from a valid image repository.
 3. This chart has been pushed to a reachable helm chart repository or the whole chart  
    has been integrated into your local project
-4. You need a pre-configured AWS EKS installation and your EKS cluster   
-   needs to have a valid ingress configuration reachable from the internet.
-5. There needs to be a Route53 Record Set defined with a wildcard DNS name aliasing the ingress's Load Balancer name.
+4. The cluster must be reachable by the Certificate Authority supporting ACME
+5. There needs to be a DNS Record Set defined with a wildcard DNS name aliasing the ingress's Load Balancer name.
 6. K8S Cert Manager needs to be installed on the cluster
 7. You can access your cluster with `kubectl`
 
@@ -34,7 +33,6 @@ helm install my-release <HELM_CHART_REPO_REF>\
     --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL>
 ```
 
-- `NAMESPACE` = Name of an existing namespace where to deploy the service.
 - `NAMESPACE` = Name of an existing namespace where to deploy the service.
 - `DOCKER_REPOSITORY_URL` = URL of docker registry to pull image from.
 - `INGRESS_HOST` = DNS name of the service under which the ingress should expose this service to the public
@@ -77,7 +75,7 @@ The chart can be executed with following parameters:
 | autoscaling.maxReplicas       | Maximum amount of replicas the HPA is allowed for upscaling. | `10` |
 | autoscaling.metrics.resource.cpu.targetAverageUtilization | Threshold in percent for CPU usage. Once this value has been reached a new POD will be created. | `80` |
 
-## Testing Pod Autoscaling
+## Testing Horizontal Pod Autoscaling
 In order to test the Pod Autoscaler with your deployed service do the following:
 
 1. Download and install a command line performance testing tool, like [ab](https://httpd.apache.org/docs/2.4/programs/ab.html) or [hey](https://github.com/rakyll/hey).  
