@@ -1,0 +1,156 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "auth-sidecar.fullname" . }}
+  labels:
+    {{- include "auth-sidecar.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "auth-sidecar.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "auth-sidecar.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "auth-sidecar.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.auth_service.image.repository }}/{{ .Values.auth_service.image.name }}:{{ .Values.auth_service.image.version }}"
+          imagePullPolicy: {{ .Values.auth_service.image.pullPolicy }}
+
+          env:
+            - name: "OS_INTERNAL_REGISTRY_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: OS_INTERNAL_REGISTRY_NAME
+
+            - name: "OIDC_DISCOVERY_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: OIDC_DISCOVERY_URL
+
+            - name: "OIDC_REDIRECT_URI"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: OIDC_REDIRECT_URI
+
+            - name: "OIDC_SCOPE"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: OIDC_SCOPE
+
+            - name: "OIDC_CLIENT_ID"
+              valueFrom:
+                secretKeyRef:
+                  name: viper-auth-sidecar
+                  key: OIDC_CLIENT_ID
+
+            - name: "OIDC_TOKEN_ENDPOINT_AUTH_METHOD"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: OIDC_TOKEN_ENDPOINT_AUTH_METHOD
+
+            - name: "OIDC_SSL_VERIFY"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: OIDC_SSL_VERIFY
+
+            - name: "OIDC_TOKEN_EXPIRY_TIME"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: OIDC_TOKEN_EXPIRY_TIME
+
+            - name: "OIDC_RENEW_ACCESS_TOKEN"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: OIDC_RENEW_ACCESS_TOKEN
+
+            - name: "TARGET_HOST"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: TARGET_HOST
+
+            - name: "TARGET_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: TARGET_PORT
+
+            - name: "LOG_LEVEL"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: LOG_LEVEL
+
+            - name: "AUTH_TYPE"
+              valueFrom:
+                configMapKeyRef:
+                  name: viper-auth-sidecar
+                  key: AUTH_TYPE
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.auth_service.service.port }}
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+        - name: {{ .Values.target_service.name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.target_service.image.repository }}/{{ .Values.target_service.image.name }}:{{ .Values.target_service.image.version }}"
+          imagePullPolicy: {{ .Values.target_service.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

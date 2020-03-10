@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "auth-sidecar.fullname" . }}
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: {{ .Values.auth_service.ingress.hostname }}
+    http:
+      paths:
+      - path: {{ .Values.auth_service.ingress.path }}
+        backend:
+          serviceName: {{ include "auth-sidecar.fullname" . }}
+          servicePort: {{ .Values.auth_service.service.port }}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: target-service
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: {{ .Values.target_service.ingress.hostname }}
+    http:
+      paths:
+      - path: {{ .Values.target_service.ingress.path }}
+        backend:
+          serviceName: {{ include "auth-sidecar.fullname" . }}
+          servicePort: {{ .Values.target_service.service.port }}

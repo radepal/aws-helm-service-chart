@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "auth-sidecar.fullname" . }}
+  labels:
+    {{- include "auth-sidecar.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.auth_service.service.type }}
+  ports:
+    - port: {{ .Values.auth_service.service.port }}
+      targetPort: {{ .Values.auth_service.service.port }}
+      protocol: TCP
+      name: http-0
+    - port: {{ .Values.target_service.service.port }}
+      targetPort: {{ .Values.target_service.service.port }}
+      protocol: TCP
+      name: http-1
+  selector:
+    {{- include "auth-sidecar.selectorLabels" . | nindent 4 }}
