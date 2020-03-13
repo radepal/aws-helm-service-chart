@@ -13,7 +13,7 @@ spec:
     solvers:
       - http01:
           ingress:
-            class: {{ .Values.ingress.class }}
+            class: {{ .Values.ingress.ext.class }}
 
 ---
 apiVersion: cert-manager.io/v1alpha2
@@ -30,4 +30,4 @@ spec:
     solvers:
       - http01:
           ingress:
-            class: {{ .Values.ingress.class }}
+            class: {{ .Values.ingress.ext.class }}
