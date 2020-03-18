@@ -7,7 +7,17 @@ To learn more about the release, try:
   $ helm status {{ .Release.Name }}
   $ helm get {{ .Release.Name }}
 
-Use curl to test your service endpoint:
 
-  export URL=$(kubectl get ingress {{ include "service.name" . }}-ing -o jsonpath='{.spec.rules[0].host}' -n {{ .Release.Namespace }})
+{{- if .Values.ingress.ext.enabled }}
+Use curl to test your external service endpoint:
+
+  export URL=$(kubectl get ingress {{ include "service.name" . }}-ing-ext -o jsonpath='{.spec.rules[0].host}' -n {{ .Release.Namespace }})
   eval $(echo "curl -k https://$URL/api/v1/status")
+{{- end }}
+
+{{- if .Values.ingress.int.enabled }}
+Use curl to test your external service endpoint:
+
+  export URL=$(kubectl get ingress {{ include "service.name" . }}-ing-int -o jsonpath='{.spec.rules[0].host}' -n {{ .Release.Namespace }})
+  eval $(echo "curl -k https://$URL/api/v1/status")
+{{- end }}
