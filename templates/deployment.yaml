@@ -24,79 +24,79 @@ spec:
             - name: "OS_INTERNAL_REGISTRY_NAME"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OS_INTERNAL_REGISTRY_NAME
 
             - name: "OIDC_DISCOVERY_URL"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OIDC_DISCOVERY_URL
 
             - name: "OIDC_REDIRECT_URI"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OIDC_REDIRECT_URI
 
             - name: "OIDC_SCOPE"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OIDC_SCOPE
 
             - name: "OIDC_CLIENT_ID"
               valueFrom:
                 secretKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OIDC_CLIENT_ID
 
             - name: "OIDC_TOKEN_ENDPOINT_AUTH_METHOD"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OIDC_TOKEN_ENDPOINT_AUTH_METHOD
 
             - name: "OIDC_SSL_VERIFY"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OIDC_SSL_VERIFY
 
             - name: "OIDC_TOKEN_EXPIRY_TIME"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OIDC_TOKEN_EXPIRY_TIME
 
             - name: "OIDC_RENEW_ACCESS_TOKEN"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: OIDC_RENEW_ACCESS_TOKEN
 
             - name: "TARGET_HOST"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: TARGET_HOST
 
             - name: "TARGET_PORT"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: TARGET_PORT
 
             - name: "LOG_LEVEL"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: LOG_LEVEL
 
             - name: "AUTH_TYPE"
               valueFrom:
                 configMapKeyRef:
-                  name: viper-auth-sidecar
+                  name: auth-sidecar
                   key: AUTH_TYPE
 
           ports:
