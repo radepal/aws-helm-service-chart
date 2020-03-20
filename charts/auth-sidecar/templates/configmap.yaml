@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: viper-auth-sidecar
-data:
-  {{- range $key, $value := .Values.oauth2.config }}
-  {{ $key }}: {{ $value | quote }}
-  {{- end }}
