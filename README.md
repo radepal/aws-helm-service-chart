@@ -118,12 +118,12 @@ The chart can be executed with following parameters:
 | autoscaling.maxReplicas       | Maximum amount of replicas the HPA is allowed for upscaling. | `10` |
 | autoscaling.metrics.resource.cpu.targetAverageUtilization | Threshold in percent for CPU usage. Once this value has been reached a new POD will be created. | `80` |
 | oauth2.enabled | Enable or disable Oauth2 Authentification Sidecar | `true` |
-| oauth2.sidecar.image.repository | Auth Sidecar Container Image URL | `hub.docker.com/sidecar` |
+| oauth2.sidecar.image.repository | Auth Sidecar Container Image URL | Example (not exist): `hub.docker.com/sidecar` |
 | oauth2.sidecar.image.name | Auth Sidecar Container Image Name | `auth-sidecar` |
 | oauth2.sidecar.image.tag | Auth Sidecar Container Image Tag | `v1.1.0` |
 | oauth2.sidecar.image.pullPolicy | Kubernetes Image PullPolicy | `Always` |
 | oauth2.sidecar.servicePort | On which port the service runs | `8443` |
-| oauth2.secret.OIDC_CLIENT_ID | Oauth2 Client ID | `jdasdh8e1h1nqdu8q3hrbfahs90uw1rlnbqufva` |
+| oauth2.secret.OIDC_CLIENT_ID | Oauth2 Client ID | Example: `jdasdh8e1h1nqdu8q3hrbfahs90uw1rlnbqufva` |
 | oauth2.config.OIDC_DISCOVERY_URL | URL from IDP Discovery Service | `https://idp.domain/auth/discovery` |
 | oauth2.config.OIDC_REDIRECT_URI | Callback URL | `https://127.0.0.1:8443/callback` |
 | oauth2.config.OIDC_SCOPE | Oauth2 Scope | `openid` |
