@@ -12,6 +12,10 @@ spec:
     metadata:
       labels:
         app: {{ include "service.name" . }}
+      annotations:
+        ad.datadoghq.com/{{ include "service.name" . }}.check_names: '["{{ include "service.name" . }}"]'
+        ad.datadoghq.com/{{ include "service.name" . }}.logs: '[{"source":"{{ .Values.datadog.source }}", "service":"{{ include "service.name" . }}"}]'
+        ad.datadoghq.com/{{ include "service.name" . }}.tags: '{"team": "DVPE", "exampleTag": "exampleTag"}'
     spec:
       imagePullSecrets:
         - name: aws-ecr-secret

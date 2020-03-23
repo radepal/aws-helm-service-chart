@@ -107,3 +107,10 @@ tls:
         name: internal-wildcard-tls-secret
         crt:
         key:
+
+
+#-------------------------------------#
+# DataDog value section #
+#-------------------------------------#
+datadog:
+  source:
