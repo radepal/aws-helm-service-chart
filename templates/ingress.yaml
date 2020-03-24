@@ -29,6 +29,7 @@ spec:
             backend:
               serviceName: {{ $serviceName }}-svc
               servicePort: {{ $ingressExtServicePort }}
+
 {{- end }}
 
 {{- if .Values.ingress.int.enabled }}

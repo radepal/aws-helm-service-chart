@@ -36,6 +36,29 @@ helm install my-release <HELM_CHART_REPO_REF>\
     --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL>
 ```
 
+If you want enable oauth2 in front of your service, run follow command
+
+```bash
+helm install my-release <HELM_CHART_REPO_REF>\
+    --namespace=<NAMESPACE> \
+    --set=image.repository=<DOCKER_REPOSITORY_URL> \
+    --set=ingress.ext.host=<INGRESS_EXT_HOST> \
+    --set=ingress.int.host=<INGRESS_INT_HOST> \
+    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
+    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY> \
+    --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL> \
+    --set=oauth2.enabled="true" \
+    --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID> \
+    --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL> \
+    --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI> \
+    --set=oauth2.config.OIDC_SSL_VERIFY=<OIDC_SSL_VERIFY> \
+    --set=oauth2.config.AUTH_TYPE=<AUTH_TYPE> \
+    --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL> \
+    --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
+    --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
+    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>
+```
+
 - `NAMESPACE` = Name of an existing namespace where to deploy the service.
 - `DOCKER_REPOSITORY_URL` = URL of docker registry to pull image from.
 - `INGRESS_EXT_HOST` = DNS name of the service under which the external ingress should expose this service to the public
@@ -43,6 +66,16 @@ helm install my-release <HELM_CHART_REPO_REF>\
 - `INGRESS_INT_CRT` = Certificate for TLS configuration of internal Ingress Controller
 - `INGRESS_INT_KEY` = Certificate's key for TLS configuration of internal Ingress Controller
 - `READINESS_ENDPOINT_URL` = The endpoint URL of your service which should be used for the readiness probe, i.e. `/api/v1/status`
+
+- `OIDC_CLIENT_ID` = Client ID (get from Identity Provider)
+- `OIDC_DISCOVERY_URL` = URL from IDP Authentication
+- `OIDC_REDIRECT_URI` = Redirect URL
+- `OIDC_SSL_VERIFY`= Enable or disable SSL Certificate Verification
+- `AUTH_TYPE` = Authentication Mode (UI or BACKEND)
+- `LOG_LEVEL` = Log Level (Default: info)
+- `SIDECAR_REPOSITORY` = Repostory of Oauth2 Container Image
+- `SIDECAR_IMAGE` = Name of Oauth2 Container Image
+- `SIDECAR_TAG` = Container Image Tag
 
 This command deploys a default service on an AWS EKS cluster in the provided namespace.
 
@@ -84,6 +117,24 @@ The chart can be executed with following parameters:
 | autoscaling.minReplicas       | Minimum amount of replicas the HPA is allowed for downscaling. | `2` |
 | autoscaling.maxReplicas       | Maximum amount of replicas the HPA is allowed for upscaling. | `10` |
 | autoscaling.metrics.resource.cpu.targetAverageUtilization | Threshold in percent for CPU usage. Once this value has been reached a new POD will be created. | `80` |
+| oauth2.enabled | Enable or disable Oauth2 Authentification Sidecar | `true` |
+| oauth2.sidecar.image.repository | Auth Sidecar Container Image URL | Example (not exist): `hub.docker.com/sidecar` |
+| oauth2.sidecar.image.name | Auth Sidecar Container Image Name | `auth-sidecar` |
+| oauth2.sidecar.image.tag | Auth Sidecar Container Image Tag | `v1.1.0` |
+| oauth2.sidecar.image.pullPolicy | Kubernetes Image PullPolicy | `Always` |
+| oauth2.sidecar.servicePort | On which port the service runs | `8443` |
+| oauth2.secret.OIDC_CLIENT_ID | Oauth2 Client ID | Example: `jdasdh8e1h1nqdu8q3hrbfahs90uw1rlnbqufva` |
+| oauth2.config.OIDC_DISCOVERY_URL | URL from IDP Discovery Service | `https://idp.domain/auth/discovery` |
+| oauth2.config.OIDC_REDIRECT_URI | Callback URL | `https://127.0.0.1:8443/callback` |
+| oauth2.config.OIDC_SCOPE | Oauth2 Scope | `openid` |
+| oauth2.config.OIDC_TOKEN_ENDPOINT_AUTH_METHOD | Oauth2 token endpoint authentication method | `client_secret_basic` |
+| oauth2.config.OIDC_SSL_VERIFY | Enable or disable ssl certificat validation | `yes` |
+| oauth2.config.OIDC_TOKEN_EXPIRY_TIME | TTL of accesstoken in seconds | `7200` |
+| oauth2.config.OIDC_RENEW_ACCESS_TOKEN | Whether to renew the access token once it has expired | `true` |
+| oauth2.config.TARGET_HOST | URL of the actual service behind this auth sidcar within the same pod | `http://127.0.0.1` |
+| oauth2.config.TARGET_PORT | Port of the actual service behind this auth sidcar within the same pod | `8080` |
+| oauth2.config.LOG_LEVEL | Log level of the auth-sidecar reverse Proxy | `info` |
+| oauth2.config.AUTH_TYPE | Client Authentication Type (UI/BACKEND) | `UI` |
 
 ## Testing Horizontal Pod Autoscaling
 In order to test the Pod Autoscaler with your deployed service do the following:
