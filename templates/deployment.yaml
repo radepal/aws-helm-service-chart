@@ -16,6 +16,105 @@ spec:
       imagePullSecrets:
         - name: aws-ecr-secret
       containers:
+{{- if .Values.oauth2.enabled }}
+        - name: {{ include "service.name" . }}-auth-sidecar
+          image: "{{ .Values.oauth2.sidecar.image.repository }}/{{ .Values.oauth2.sidecar.image.name }}:{{ .Values.oauth2.sidecar.image.tag }}"
+          imagePullPolicy: {{ .Values.oauth2.sidecar.image.pullPolicy }}
+          env:
+            - name: "OIDC_DISCOVERY_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_DISCOVERY_URL
+
+            - name: "OIDC_REDIRECT_URI"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_REDIRECT_URI
+
+            - name: "OIDC_SCOPE"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_SCOPE
+
+            - name: "OIDC_CLIENT_ID"
+              valueFrom:
+                secretKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_CLIENT_ID
+
+            - name: "OIDC_TOKEN_ENDPOINT_AUTH_METHOD"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_TOKEN_ENDPOINT_AUTH_METHOD
+
+            - name: "OIDC_SSL_VERIFY"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_SSL_VERIFY
+
+            - name: "OIDC_TOKEN_EXPIRY_TIME"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_TOKEN_EXPIRY_TIME
+
+            - name: "OIDC_RENEW_ACCESS_TOKEN"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_RENEW_ACCESS_TOKEN
+
+            - name: "TARGET_HOST"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: TARGET_HOST
+
+            - name: "TARGET_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: TARGET_PORT
+
+            - name: "LOG_LEVEL"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: LOG_LEVEL
+
+            - name: "AUTH_TYPE"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: AUTH_TYPE
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.oauth2.sidecar.servicePort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.oauth2.sidecar.servicePort }}
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+{{- end }}
+
         - name: {{ include "service.name" . }}
           image: {{ include "image.url" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
