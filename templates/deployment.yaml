@@ -21,12 +21,6 @@ spec:
           image: "{{ .Values.oauth2.sidecar.image.repository }}/{{ .Values.oauth2.sidecar.image.name }}:{{ .Values.oauth2.sidecar.image.tag }}"
           imagePullPolicy: {{ .Values.oauth2.sidecar.image.pullPolicy }}
           env:
-            - name: "OS_INTERNAL_REGISTRY_NAME"
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-sidecar
-                  key: OS_INTERNAL_REGISTRY_NAME
-
             - name: "OIDC_DISCOVERY_URL"
               valueFrom:
                 configMapKeyRef:
