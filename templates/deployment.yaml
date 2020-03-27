@@ -14,8 +14,15 @@ spec:
         app: {{ include "service.name" . }}
       annotations:
         ad.datadoghq.com/{{ include "service.name" . }}.check_names: '["{{ include "service.name" . }}"]'
-        ad.datadoghq.com/{{ include "service.name" . }}.logs: '[{"source":"{{ .Values.datadog.source }}", "service":"{{ include "service.name" . }}"}]'
-        ad.datadoghq.com/{{ include "service.name" . }}.tags: '{"team": "DVPE", "exampleTag": "exampleTag"}'
+        ad.datadoghq.com/{{ include "service.name" . }}.init_configs: '[{}]'
+        ad.datadoghq.com/{{ include "service.name" . }}.logs: '[{"source":"{{ .Values.datadog.source.service }}", "service":"{{ include "service.name" . }}"}]'
+        ad.datadoghq.com/{{ include "service.name" . }}.tags: '{"team": "DVPE"}'
+{{- if .Values.oauth2.enabled }}
+        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.check_names: '["{{ include "service.name" . }}-auth-sidecar"]'
+        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.init_configs: '[{}]'
+        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.logs: '[{"source":"{{ .Values.datadog.source.sidecar }}", "service":"{{ include "service.name" . }}-auth-sidecar"}]'
+        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.tags: '{"team": "DVPE"}'
+{{- end }}
     spec:
       imagePullSecrets:
         - name: aws-ecr-secret
@@ -97,6 +104,10 @@ spec:
                   name: auth-sidecar
                   key: AUTH_TYPE
 
+            - name: "DD_AGENT_HOST"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           ports:
             - name: http
               containerPort: {{ .Values.oauth2.sidecar.servicePort }}
@@ -124,17 +135,23 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             {{- if .Values.project.includeAwsCredentials }}
-            - name: AWS_ACCESS_KEY
+            - name: "AWS_ACCESS_KEY"
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.accesskey
-            - name: AWS_SECRET_KEY
+            - name: "AWS_SECRET_KEY"
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.secretkey
             {{- end}}
+            - name: "DD_AGENT_HOST"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: "DD_SERVICE_NAME"
+              value: {{ include "service.name" . }}
           readinessProbe:
             httpGet:
               path: {{ .Values.containers.readinessProbe.httpGet.path }}

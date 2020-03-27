@@ -153,3 +153,5 @@ tls:
 #-------------------------------------#
 datadog:
   source:
+    service:
+    sidecar: nginx

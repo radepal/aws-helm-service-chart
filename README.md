@@ -46,8 +46,7 @@ helm install my-release <HELM_CHART_REPO_REF>\
     --set=ingress.int.host=<INGRESS_INT_HOST> \
     --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
     --set=tls.cert.int.secret.key=<INGRESS_INT_KEY> \
-    --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL> \
-    --set=oauth2.enabled="true" \
+    --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL> \    --set=oauth2.enabled="true" \
     --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID> \
     --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL> \
     --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI> \
@@ -57,6 +56,7 @@ helm install my-release <HELM_CHART_REPO_REF>\
     --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
     --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
     --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>
+
 ```
 
 - `NAMESPACE` = Name of an existing namespace where to deploy the service.
