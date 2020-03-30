@@ -25,39 +25,58 @@ The following components will be deployed with the service.
 To install an existing service with release name `my-release`, run the following minimum command from the root
 folder of your application:
 
+### Run without further dependencies
+
+Run the chart if you only want to deploy your service without any further dependencies (this assumes there's no ingress configuratio in your environment):
+
 ```bash
 helm install my-release <HELM_CHART_REPO_REF>\
     --namespace=<NAMESPACE> \
     --set=image.repository=<DOCKER_REPOSITORY_URL> \
-    --set=ingress.ext.host=<INGRESS_EXT_HOST> \
-    --set=ingress.int.host=<INGRESS_INT_HOST> \
-    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
-    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY> \
     --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL>
 ```
 
-If you want enable oauth2 in front of your service, run follow command
+### Include internal/external Ingress
+
+If you configured ingress controllers in your kubernetes cluster for intranet and extranet access, 
+then append the following parameters to enble their usage:
 
 ```bash
-helm install my-release <HELM_CHART_REPO_REF>\
-    --namespace=<NAMESPACE> \
-    --set=image.repository=<DOCKER_REPOSITORY_URL> \
-    --set=ingress.ext.host=<INGRESS_EXT_HOST> \
-    --set=ingress.int.host=<INGRESS_INT_HOST> \
-    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
-    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY> \
-    --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL> \    --set=oauth2.enabled="true" \
-    --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID> \
-    --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL> \
-    --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI> \
-    --set=oauth2.config.OIDC_SSL_VERIFY=<OIDC_SSL_VERIFY> \
-    --set=oauth2.config.AUTH_TYPE=<AUTH_TYPE> \
-    --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL> \
-    --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
-    --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
-    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>
-
+    --set=ingress.ext.enabled=true 
+    --set=ingress.ext.host=<INGRESS_EXT_HOST>
+    --set=ingress.int.enabled=true
+    --set=ingress.int.host=<INGRESS_INT_HOST>
+    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT>
+    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY>
 ```
+
+### Include Oauth2 Authentication
+
+If you want to add oauth2 as sidecar in front of your service, append the follow parameters:
+
+```bash
+    --set=oauth2.enabled="true"
+    --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID>
+    --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL>
+    --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI>
+    --set=oauth2.config.OIDC_SSL_VERIFY=<OIDC_SSL_VERIFY>
+    --set=oauth2.config.AUTH_TYPE=<AUTH_TYPE>
+    --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL>
+    --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY>
+    --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE}
+    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>
+```
+
+### Include DataDog Monitoring
+
+Finally if you like to add DataDog Monitoring for the included service append the following parameters:
+
+```bash
+    --set=datadog.enabled=true
+    --set=datadog.source.service="java"
+```
+
+### Variable Definitions
 
 - `NAMESPACE` = Name of an existing namespace where to deploy the service.
 - `DOCKER_REPOSITORY_URL` = URL of docker registry to pull image from.
@@ -66,7 +85,6 @@ helm install my-release <HELM_CHART_REPO_REF>\
 - `INGRESS_INT_CRT` = Certificate for TLS configuration of internal Ingress Controller
 - `INGRESS_INT_KEY` = Certificate's key for TLS configuration of internal Ingress Controller
 - `READINESS_ENDPOINT_URL` = The endpoint URL of your service which should be used for the readiness probe, i.e. `/api/v1/status`
-
 - `OIDC_CLIENT_ID` = Client ID (get from Identity Provider)
 - `OIDC_DISCOVERY_URL` = URL from IDP Authentication
 - `OIDC_REDIRECT_URI` = Redirect URL
@@ -77,7 +95,6 @@ helm install my-release <HELM_CHART_REPO_REF>\
 - `SIDECAR_IMAGE` = Name of Oauth2 Container Image
 - `SIDECAR_TAG` = Container Image Tag
 
-This command deploys a default service on an AWS EKS cluster in the provided namespace.
 
 See the [configuration](#Configuration) section for a detailed overview of parameters.
 
@@ -135,6 +152,8 @@ The chart can be executed with following parameters:
 | oauth2.config.TARGET_PORT | Port of the actual service behind this auth sidcar within the same pod | `8080` |
 | oauth2.config.LOG_LEVEL | Log level of the auth-sidecar reverse Proxy | `info` |
 | oauth2.config.AUTH_TYPE | Client Authentication Type (UI/BACKEND) | `UI` |
+| datadog.enabled | `true` if DataDog annotations should be used, `false` otherwise | `false` |
+| datadog.source.service| The name of the DataDog source the service should be instrumented with. | `java` |
 
 ## Testing Horizontal Pod Autoscaling
 In order to test the Pod Autoscaler with your deployed service do the following:
