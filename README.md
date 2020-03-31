@@ -56,7 +56,34 @@ helm install my-release <HELM_CHART_REPO_REF>\
     --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL> \
     --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
     --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
-    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>
+    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>    
+```
+
+If you want enable oauth2 with session-cache in front of your service, run follow command
+```bash
+helm install my-release <HELM_CHART_REPO_REF>\
+    --namespace=<NAMESPACE> \
+    --set=image.repository=<DOCKER_REPOSITORY_URL> \
+    --set=ingress.ext.host=<INGRESS_EXT_HOST> \
+    --set=ingress.int.host=<INGRESS_INT_HOST> \
+    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
+    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY> \
+    --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL> \
+    --set=oauth2.enabled="true" \
+    --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID> \
+    --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL> \
+    --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI> \
+    --set=oauth2.config.OIDC_SSL_VERIFY=<OIDC_SSL_VERIFY> \
+    --set=oauth2.config.AUTH_TYPE=<AUTH_TYPE> \
+    --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL> \
+    --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
+    --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
+    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>    
+    --set=oauth2.cache.SESSION_CACHE_ENABLED=<SESSION_CACHE_ENABLED> \
+    --set=oauth2.cache.SESSION_STORAGE=<SESSION_STORAGE> \
+    --set=oauth2.cache.SESSION_STORAGE_HOST=<SESSION_STORAGE_HOST> \
+    --set=oauth2.cache.SESSION_STORAGE_PORT=<SESSION_STORAGE_PORT> \
+    --set=oauth2.secret.SESSION_SECRET=<SESSION_SECRET>
 ```
 
 - `NAMESPACE` = Name of an existing namespace where to deploy the service.
@@ -69,6 +96,7 @@ helm install my-release <HELM_CHART_REPO_REF>\
 
 - `OIDC_CLIENT_ID` = Client ID (get from Identity Provider)
 - `OIDC_DISCOVERY_URL` = URL from IDP Authentication
+- `OIDC_DISCOVERY_URL_BACKEND` = URL from IDP Authentication (for backend services)
 - `OIDC_REDIRECT_URI` = Redirect URL
 - `OIDC_SSL_VERIFY`= Enable or disable SSL Certificate Verification
 - `AUTH_TYPE` = Authentication Mode (UI or BACKEND)
@@ -76,6 +104,11 @@ helm install my-release <HELM_CHART_REPO_REF>\
 - `SIDECAR_REPOSITORY` = Repostory of Oauth2 Container Image
 - `SIDECAR_IMAGE` = Name of Oauth2 Container Image
 - `SIDECAR_TAG` = Container Image Tag
+- `SESSION_CACHE_ENABLED` = Enable or disable the session cache
+- `SESSION_STORAGE` = Define the cache storage
+- `SESSION_STORAGE_HOST` = Cache System Hostname/IP Address
+- `SESSION_STORAGE_PORT` = Cache System Port Number
+- `SESSION_SECRET` = Session Secret
 
 This command deploys a default service on an AWS EKS cluster in the provided namespace.
 
@@ -125,6 +158,7 @@ The chart can be executed with following parameters:
 | oauth2.sidecar.servicePort | On which port the service runs | `8443` |
 | oauth2.secret.OIDC_CLIENT_ID | Oauth2 Client ID | Example: `jdasdh8e1h1nqdu8q3hrbfahs90uw1rlnbqufva` |
 | oauth2.config.OIDC_DISCOVERY_URL | URL from IDP Discovery Service | `https://idp.domain/auth/discovery` |
+| oauth2.config.OIDC_DISCOVERY_URL_BACKEND | URL from IDP Discovery Service for backend services | `https://idp.domain:9876/auth/discovery` |
 | oauth2.config.OIDC_REDIRECT_URI | Callback URL | `https://127.0.0.1:8443/callback` |
 | oauth2.config.OIDC_SCOPE | Oauth2 Scope | `openid` |
 | oauth2.config.OIDC_TOKEN_ENDPOINT_AUTH_METHOD | Oauth2 token endpoint authentication method | `client_secret_basic` |
@@ -135,6 +169,11 @@ The chart can be executed with following parameters:
 | oauth2.config.TARGET_PORT | Port of the actual service behind this auth sidcar within the same pod | `8080` |
 | oauth2.config.LOG_LEVEL | Log level of the auth-sidecar reverse Proxy | `info` |
 | oauth2.config.AUTH_TYPE | Client Authentication Type (UI/BACKEND) | `UI` |
+| oauth2.cache.SESSION_CACHE_ENABLED | Disable or enable the session cache | `true` |
+| oauth2.cache.SESSION_STORAGE | Name of the storage system, currently only redis is available | `redis` |
+| oauth2.cache.SESSION_STORAGE_HOST | Hostname (FQDN) or IP Address of the session cache server/cluster | `127.0.0.1` |
+| oauth2.cache.SESSION_STORAGE_PORT | Port Number | `6379` |
+| oauth2.cache.SESSION_SECRET | Session secret | `11111111aaaaaaaaabbbbbbCCCCCDDDDD` |
 
 ## Testing Horizontal Pod Autoscaling
 In order to test the Pod Autoscaler with your deployed service do the following:

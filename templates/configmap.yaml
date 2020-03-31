@@ -7,4 +7,7 @@ data:
   {{- range $key, $value := .Values.oauth2.config }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
+  {{- range $key, $value := .Values.oauth2.cache }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
 {{- end }}

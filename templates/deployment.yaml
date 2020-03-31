@@ -27,6 +27,12 @@ spec:
                   name: auth-sidecar
                   key: OIDC_DISCOVERY_URL
 
+            - name: "OIDC_DISCOVERY_URL_BACKEND"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: OIDC_DISCOVERY_URL_BACKEND
+
             - name: "OIDC_REDIRECT_URI"
               valueFrom:
                 configMapKeyRef:
@@ -93,6 +99,38 @@ spec:
                   name: auth-sidecar
                   key: AUTH_TYPE
 
+{{- if .Values.oauth2.cache.SESSION_CACHE_ENABLED }}
+            - name: "SESSION_CACHE_ENABLED"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_CACHE_ENABLED
+
+            - name: "SESSION_STORAGE"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE
+
+            - name: "SESSION_STORAGE_HOST"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE_HOST
+
+            - name: "SESSION_STORAGE_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE_PORT
+
+            - name: "SESSION_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_SECRET
+{{- end }}
+            
           ports:
             - name: http
               containerPort: {{ .Values.oauth2.sidecar.servicePort }}
@@ -114,7 +152,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 {{- end }}
-
         - name: {{ include "service.name" . }}
           image: {{ include "image.url" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
