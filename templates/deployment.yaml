@@ -12,11 +12,24 @@ spec:
     metadata:
       labels:
         app: {{ include "service.name" . }}
+      {{- if .Values.datadog.enabled }}
+      annotations:
+        ad.datadoghq.com/{{ include "service.name" . }}.check_names: '["{{ include "service.name" . }}"]'
+        ad.datadoghq.com/{{ include "service.name" . }}.init_configs: '[{}]'
+        ad.datadoghq.com/{{ include "service.name" . }}.logs: '[{"source":"{{ .Values.datadog.source.service }}", "service":"{{ include "service.name" . }}" }]'
+        ad.datadoghq.com/{{ include "service.name" . }}.tags: '{"team": "DVPE"}'
+        {{- if .Values.oauth2.enabled }}
+        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.check_names: '["{{ include "service.name" . }}-auth-sidecar"]'
+        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.init_configs: '[{}]'
+        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.logs: '[{"source":"{{ .Values.datadog.source.sidecar }}", "service":"{{ include "service.name" . }}-auth-sidecar" }]'
+        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.tags: '{"team": "DVPE"}'
+        {{- end }}
+      {{- end }}
     spec:
       imagePullSecrets:
         - name: aws-ecr-secret
       containers:
-{{- if .Values.oauth2.enabled }}
+    {{- if .Values.oauth2.enabled }}
         - name: {{ include "service.name" . }}-auth-sidecar
           image: "{{ .Values.oauth2.sidecar.image.repository }}/{{ .Values.oauth2.sidecar.image.name }}:{{ .Values.oauth2.sidecar.image.tag }}"
           imagePullPolicy: {{ .Values.oauth2.sidecar.image.pullPolicy }}
@@ -92,7 +105,12 @@ spec:
                 configMapKeyRef:
                   name: auth-sidecar
                   key: AUTH_TYPE
-
+            {{- if .Values.datadog.enabled }}
+            - name: "DD_AGENT_HOST"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.oauth2.sidecar.servicePort }}
@@ -113,23 +131,32 @@ spec:
             failureThreshold: 3
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-{{- end }}
-
+    {{- end }}
         - name: {{ include "service.name" . }}
           image: {{ include "image.url" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             {{- if .Values.project.includeAwsCredentials }}
-            - name: AWS_ACCESS_KEY
+            - name: "AWS_ACCESS_KEY"
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.accesskey
-            - name: AWS_SECRET_KEY
+            - name: "AWS_SECRET_KEY"
               valueFrom:
                 secretKeyRef:
                   name: {{ include "service.name" . }}-secret
                   key: aws.secretkey
+            {{- end}}
+            {{- if .Values.datadog.enabled }}
+            - name: "ENABLE_DATADOG"
+              value: {{ quote .Values.datadog.enabled }}
+            - name: "DD_AGENT_HOST"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: "DD_SERVICE_NAME"
+              value: {{ include "service.name" . }}
             {{- end}}
           readinessProbe:
             httpGet:
