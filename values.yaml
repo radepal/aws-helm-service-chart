@@ -156,3 +156,10 @@ datadog:
   source:
     service:
     sidecar: nginx
+
+#-------------------------------------#
+# Application value section           #
+#-------------------------------------#
+app:
+  configIncluded: false
+  secretsIncluded: false

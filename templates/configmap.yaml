@@ -8,3 +8,15 @@ data:
   {{ $key }}: {{ $value | quote }}
   {{- end }}
 {{- end }}
+
+---
+{{- if .Values.app.configIncluded }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-config
+data:
+  {{- range $key, $value := .Values.app.config }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
