@@ -10,13 +10,13 @@ data:
 {{- end }}
 
 ---
-{{- if .Values.app.configIncluded }}
+{{- if .Values.permissionchecker.config }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: application-config
+  name: permission-checker
 data:
-  {{- range $key, $value := .Values.app.config }}
+  {{- range $key, $value := .Values.permissionchecker.config }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
 {{- end }}

@@ -158,14 +158,12 @@ spec:
             - name: "DD_SERVICE_NAME"
               value: {{ include "service.name" . }}
             {{- end}}
-            {{- if .Values.app.configIncluded }}
-            {{- range $key, $value := .Values.app.config }}
+            {{- if .Values.permissionchecker.enabled }}
+            {{- range $key, $value := .Values.permissionchecker.config }}
             - name: {{ $key }}
               value: {{ $value }}
             {{- end }}
-            {{- end}}
-            {{- if .Values.app.secretsIncluded }}
-            {{- range $key, $value := .Values.app.secrets }}
+            {{- range $key, $value := .Values.permissionchecker.secret }}
             - name: {{ $key }}
               value: {{ $value }}
             {{- end }}

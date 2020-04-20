@@ -158,8 +158,12 @@ datadog:
     sidecar: nginx
 
 #-------------------------------------#
-# Application value section           #
+# Permission Checker value section    #
 #-------------------------------------#
-app:
-  configIncluded: false
-  secretsIncluded: false
+permissionchecker:
+  enabled: false
+  secret:
+    PRISMA_DB_USERNAME: ""
+    PRISMA_DB_PASSWORD: ""
+  config:
+    PRISMA_DB_URL: "jdbc:oracle:thin:@tlprisma1.bmwgroup.net:1523:prismacl"
