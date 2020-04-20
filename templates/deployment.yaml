@@ -159,14 +159,36 @@ spec:
               value: {{ include "service.name" . }}
             {{- end}}
             {{- if .Values.permissionchecker.enabled }}
-            {{- range $key, $value := .Values.permissionchecker.config }}
-            - name: {{ $key }}
-              value: {{ $value }}
-            {{- end }}
-            {{- range $key, $value := .Values.permissionchecker.secret }}
-            - name: {{ $key }}
-              value: {{ $value }}
-            {{- end }}
+            {{- range $key := .Values.permissionchecker.config }}
+            - name: {{$key}}
+              valueFrom:
+                configMapKeyRef:
+                  name: permission-checker
+                  key: {{$key}}
+            {{- end}}
+            {{- range $key := .Values.permissionchecker.secret }}
+            - name: {{$key}}
+              valueFrom:
+                secretKeyRef:
+                  name: permission-checker
+                  key: {{$key}}
+            {{- end}}
+            {{- end}}
+            {{- if .Values.prismadownloader.enabled }}
+            {{- range $key := .Values.prismadownloader.config }}
+            - name: {{$key}}
+              valueFrom:
+                configMapKeyRef:
+                  name: prisma-downloader
+                  key: {{$key}}
+            {{- end}}
+            {{- range $key := .Values.prismadownloader.secret }}
+            - name: {{$key}}
+              valueFrom:
+                secretKeyRef:
+                  name: prisma-dowloader
+                  key: {{$key}}
+            {{- end}}
             {{- end}}
           readinessProbe:
             httpGet:

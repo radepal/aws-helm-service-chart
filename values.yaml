@@ -167,3 +167,18 @@ permissionchecker:
     PRISMA_DB_PASSWORD: ""
   config:
     PRISMA_DB_URL: "jdbc:oracle:thin:@tlprisma1.bmwgroup.net:1523:prismacl"
+
+#-------------------------------------#
+# PRISMA Downloader value section     #
+#-------------------------------------#
+prismadownloader:
+  enabled: false
+  secret:
+    PRISMA_USERNAME: ""
+    PRISMA_PASSWORD: ""
+  config:
+    PRISMA_DB_NAME: "PRISMA_CLONE"
+    PRISMA_SERVER_ENTRIES: "liprvau6.bmwgroup.net:1468,liprvau6.bmwgroup.net:1469"
+    PERMISSION_CHECKER_URL: ""
+    S3_CACHE_BUCKET_NAME: ""
+    S3_CACHE_REGION: ""
