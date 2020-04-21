@@ -106,11 +106,15 @@ spec:
                   name: auth-sidecar
                   key: AUTH_TYPE
             {{- if .Values.datadog.enabled }}
+            - name: "ENABLE_DATADOG"
+              value: {{ quote .Values.datadog.enabled }}
             - name: "DD_AGENT_HOST"
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-            {{- end }}
+            - name: "DD_SERVICE"
+              value: {{ include "service.name" . }}-auth-sidecar
+            {{- end}}
           ports:
             - name: http
               containerPort: {{ .Values.oauth2.sidecar.servicePort }}
