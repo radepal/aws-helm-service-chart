@@ -98,6 +98,23 @@ Finally if you like to add DataDog Monitoring for the included service append th
 
 See the [configuration](#Configuration) section for a detailed overview of parameters.
 
+### Define additional parameters for deployed services
+
+Sometimes the deployed service needs some extra parameters or secrets to run. In such case additional ConfigMap or Secret will be created to pass the necessary values to the container as environmental variables. To do that can include a supplementary value yaml file formatted as follows
+
+```
+additionalparameters:
+  configMapApplied: true # flag to tell a configmap is defined
+  secretsMapApplied: true # flag to tell secrets are defined
+  config:
+    <PARAM_NAME>: <PARAM_VALUE>
+    <PARAM_NAME2>: <PARAM_VALUE2>
+    ...
+  secret:
+    <SECRET_NAME>: <SECRET_VALUE>
+    ...
+```
+
 ## Uninstall the chart
 
 To uninstall the `my-release` deployment type: `helm delete my-release -n <NAMESPACE>`
