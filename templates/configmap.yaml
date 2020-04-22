@@ -10,7 +10,7 @@ data:
 {{- end }}
 
 ---
-{{- if .Values.additionalparameters.config}}
+{{- if .Values.additionalparameters.configMapApplied}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
