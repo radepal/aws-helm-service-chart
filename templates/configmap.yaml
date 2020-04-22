@@ -10,25 +10,13 @@ data:
 {{- end }}
 
 ---
-{{- if .Values.permissionchecker.enabled }}
+{{- if .Values.additionalparameters.config}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: permission-checker
+  name: additional-parametes
 data:
-  {{- range $key, $value := .Values.permissionchecker.config }}
-  {{ $key }}: {{ $value | quote }}
-  {{- end }}
-{{- end }}
-
----
-{{- if .Values.prismadownloader.enabled }}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: prisma-downloader
-data:
-  {{- range $key, $value := .Values.prismadownloader.config }}
+  {{- range $key, $value := .Values.additionalparameters.config }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
 {{- end }}

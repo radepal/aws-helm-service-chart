@@ -158,35 +158,21 @@ spec:
             - name: "DD_SERVICE_NAME"
               value: {{ include "service.name" . }}
             {{- end}}
-            {{- if .Values.permissionchecker.enabled }}
-            {{- range $key := .Values.permissionchecker.config }}
-            - name: {{$key}}
+            {{- if .Values.additionalparameters.configMapApplied }}
+            {{- range $key, $value := .Values.additionalparameters.config }}
+            - name: "{{$key}}"
               valueFrom:
                 configMapKeyRef:
-                  name: permission-checker
+                  name:  additional-parametes
                   key: {{$key}}
             {{- end}}
-            {{- range $key := .Values.permissionchecker.secret }}
-            - name: {{$key}}
+            {{- end}}
+            {{- if .Values.additionalparameters.secretsApplied }}
+            {{- range $key, $value := .Values.additionalparameters.secrets }}
+            - name: "{{$key}}"
               valueFrom:
                 secretKeyRef:
-                  name: permission-checker
-                  key: {{$key}}
-            {{- end}}
-            {{- end}}
-            {{- if .Values.prismadownloader.enabled }}
-            {{- range $key := .Values.prismadownloader.config }}
-            - name: {{$key}}
-              valueFrom:
-                configMapKeyRef:
-                  name: prisma-downloader
-                  key: {{$key}}
-            {{- end}}
-            {{- range $key := .Values.prismadownloader.secret }}
-            - name: {{$key}}
-              valueFrom:
-                secretKeyRef:
-                  name: prisma-dowloader
+                  name:  additional-secrets
                   key: {{$key}}
             {{- end}}
             {{- end}}

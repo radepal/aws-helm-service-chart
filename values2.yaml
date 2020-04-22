@@ -1,0 +1,13 @@
+#-------------------------------------#
+# Permission Checker value section    #
+# Extension param value section       #
+#-------------------------------------#
+
+additionalparameters:
+  configMapApplied: false
+  secretsMapApplied: false
+  config:
+    PRISMA_DB_URL: "jdbc:oracle:thin:@tlprisma1.bmwgroup.net:1523:prismacl"
+  secret:
+    PRISMA_DB_USERNAME: "qxm..."
+    PRISMA_DB_PASSWORD: "pass"
