@@ -21,8 +21,6 @@ oauth2:
   config:
     # Auto Config URL for OIDC Provider for UI Services
     OIDC_DISCOVERY_URL: ""
-    # Auto Config URL for OIDC Provider for BACKEND Services
-    OIDC_DISCOVERY_URL_BACKEND: ""
     # Redirect URL 
     OIDC_REDIRECT_URI: "https://127.0.0.1:8443/callback"
     # OAuth Scopes
