@@ -96,7 +96,6 @@ helm install my-release <HELM_CHART_REPO_REF>\
 
 - `OIDC_CLIENT_ID` = Client ID (get from Identity Provider)
 - `OIDC_DISCOVERY_URL` = URL from IDP Authentication
-- `OIDC_DISCOVERY_URL_BACKEND` = URL from IDP Authentication (for backend services)
 - `OIDC_REDIRECT_URI` = Redirect URL
 - `OIDC_SSL_VERIFY`= Enable or disable SSL Certificate Verification
 - `AUTH_TYPE` = Authentication Mode (UI or BACKEND)
@@ -158,7 +157,6 @@ The chart can be executed with following parameters:
 | oauth2.sidecar.servicePort | On which port the service runs | `8443` |
 | oauth2.secret.OIDC_CLIENT_ID | Oauth2 Client ID | Example: `jdasdh8e1h1nqdu8q3hrbfahs90uw1rlnbqufva` |
 | oauth2.config.OIDC_DISCOVERY_URL | URL from IDP Discovery Service | `https://idp.domain/auth/discovery` |
-| oauth2.config.OIDC_DISCOVERY_URL_BACKEND | URL from IDP Discovery Service for backend services | `https://idp.domain:9876/auth/discovery` |
 | oauth2.config.OIDC_REDIRECT_URI | Callback URL | `https://127.0.0.1:8443/callback` |
 | oauth2.config.OIDC_SCOPE | Oauth2 Scope | `openid` |
 | oauth2.config.OIDC_TOKEN_ENDPOINT_AUTH_METHOD | Oauth2 token endpoint authentication method | `client_secret_basic` |
