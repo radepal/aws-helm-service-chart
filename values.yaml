@@ -164,4 +164,6 @@ additionalparameters:
   configMapApplied: false
   secretsApplied: false
   config:
+    PLACEHOLDER: "placeholder"
   secrets:
+    PLACEHOLDER: "placeholder"
