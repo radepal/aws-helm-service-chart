@@ -100,7 +100,7 @@ See the [configuration](#Configuration) section for a detailed overview of param
 
 ### Define additional parameters for deployed services
 
-Sometimes the deployed service needs some extra parameters or secrets to run. In such case additional ConfigMap or Secret will be created to pass the necessary values to the container as environmental variables. To do that can include a supplementary value yaml file formatted as follows
+Sometimes the deployed service needs some extra parameters or secrets to run. In such cases an additional ConfigMap or Secret will be created to pass the necessary values to the container as environmental variables. To do that you can include a supplementary values.yaml file in your own project and format it like in the code snippet below:
 
 ```
 additionalparameters:
@@ -113,6 +113,11 @@ additionalparameters:
   secret:
     <SECRET_NAME>: <SECRET_VALUE>
     ...
+```
+
+You can then call the chart by passing the additional values.yaml as command line argument:
+```
+helm install <SERVICE_NAME> -f values.yaml
 ```
 
 ## Uninstall the chart
