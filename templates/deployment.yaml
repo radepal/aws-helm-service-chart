@@ -27,12 +27,6 @@ spec:
                   name: auth-sidecar
                   key: OIDC_DISCOVERY_URL
 
-            - name: "OIDC_DISCOVERY_URL_BACKEND"
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-sidecar
-                  key: OIDC_DISCOVERY_URL_BACKEND
-
             - name: "OIDC_REDIRECT_URI"
               valueFrom:
                 configMapKeyRef:
