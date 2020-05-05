@@ -1,3 +1,5 @@
+{{- $ingressType := include "ingress.type" . -}}
+
 Successfully installed {{ .Chart.Name }}.
 
 The release of this service is named {{ .Release.Name }}.
@@ -7,16 +9,15 @@ To learn more about the release, try:
   $ helm status {{ .Release.Name }}
   $ helm get {{ .Release.Name }}
 
-
-{{- if .Values.ingress.ext.enabled }}
+{{- if or (eq $ingressType "public") (eq $ingressType "both") }}
 Use curl to test your external service endpoint:
 
   export URL=$(kubectl get ingress {{ include "service.name" . }}-ing-ext -o jsonpath='{.spec.rules[0].host}' -n {{ .Release.Namespace }})
   eval $(echo "curl -k https://$URL/api/v1/status")
 {{- end }}
 
-{{- if .Values.ingress.int.enabled }}
-Use curl to test your external service endpoint:
+{{- if or (eq $ingressType "private") (eq $ingressType "both") }}
+Use curl to test your internal service endpoint:
 
   export URL=$(kubectl get ingress {{ include "service.name" . }}-ing-int -o jsonpath='{.spec.rules[0].host}' -n {{ .Release.Namespace }})
   eval $(echo "curl -k https://$URL/api/v1/status")
