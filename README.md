@@ -79,7 +79,6 @@ helm install my-release <HELM_CHART_REPO_REF>\
     --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
     --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
     --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>    
-    --set=oauth2.cache.SESSION_CACHE_ENABLED=<SESSION_CACHE_ENABLED> \
     --set=oauth2.cache.SESSION_STORAGE=<SESSION_STORAGE> \
     --set=oauth2.cache.SESSION_STORAGE_HOST=<SESSION_STORAGE_HOST> \
     --set=oauth2.cache.SESSION_STORAGE_PORT=<SESSION_STORAGE_PORT> \
@@ -103,7 +102,6 @@ helm install my-release <HELM_CHART_REPO_REF>\
 - `SIDECAR_REPOSITORY` = Repostory of Oauth2 Container Image
 - `SIDECAR_IMAGE` = Name of Oauth2 Container Image
 - `SIDECAR_TAG` = Container Image Tag
-- `SESSION_CACHE_ENABLED` = Enable or disable the session cache
 - `SESSION_STORAGE` = Define the cache storage
 - `SESSION_STORAGE_HOST` = Cache System Hostname/IP Address
 - `SESSION_STORAGE_PORT` = Cache System Port Number
@@ -167,8 +165,7 @@ The chart can be executed with following parameters:
 | oauth2.config.TARGET_PORT | Port of the actual service behind this auth sidcar within the same pod | `8080` |
 | oauth2.config.LOG_LEVEL | Log level of the auth-sidecar reverse Proxy | `info` |
 | oauth2.config.AUTH_TYPE | Client Authentication Type (UI/BACKEND) | `UI` |
-| oauth2.cache.SESSION_CACHE_ENABLED | Disable or enable the session cache | `true` |
-| oauth2.cache.SESSION_STORAGE | Name of the storage system, currently only redis is available | `redis` |
+| oauth2.cache.SESSION_STORAGE | Name of the storage system, currently only cookie and redis are available, default is cookie | `redis` |
 | oauth2.cache.SESSION_STORAGE_HOST | Hostname (FQDN) or IP Address of the session cache server/cluster | `127.0.0.1` |
 | oauth2.cache.SESSION_STORAGE_PORT | Port Number | `6379` |
 | oauth2.cache.SESSION_SECRET | Session secret | `11111111aaaaaaaaabbbbbbCCCCCDDDDD` |

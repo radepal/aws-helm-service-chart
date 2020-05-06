@@ -93,13 +93,6 @@ spec:
                   name: auth-sidecar
                   key: AUTH_TYPE
 
-{{- if .Values.oauth2.cache.SESSION_CACHE_ENABLED }}
-            - name: "SESSION_CACHE_ENABLED"
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-sidecar
-                  key: SESSION_CACHE_ENABLED
-
             - name: "SESSION_STORAGE"
               valueFrom:
                 configMapKeyRef:
@@ -122,9 +115,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: auth-sidecar
-                  key: SESSION_SECRET
-{{- end }}
-            
+                  key: SESSION_SECRET            
           ports:
             - name: http
               containerPort: {{ .Values.oauth2.sidecar.servicePort }}

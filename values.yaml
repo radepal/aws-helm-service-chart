@@ -43,9 +43,7 @@ oauth2:
     AUTH_TYPE: "UI"
   cache:
     # Enable or disable Session Cache
-    SESSION_CACHE_ENABLED: "false"
-    # Select Storage system from lua-resty-session plugin
-    SESSION_STORAGE: ""
+    SESSION_STORAGE: "cookie"
     # Session Storage Hostname/IP Address, reachable service inside Kubernetes
     SESSION_STORAGE_HOST: ""
     # Port from Session Storage Server/Service
