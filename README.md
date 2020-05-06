@@ -25,50 +25,38 @@ The following components will be deployed with the service.
 To install an existing service with release name `my-release`, run the following minimum command from the root
 folder of your application:
 
+### Run without further dependencies
+
+Run the chart if you only want to deploy your service without any further dependencies (this assumes there's no ingress configuration in your environment):
+
 ```bash
 helm install my-release <HELM_CHART_REPO_REF>\
     --namespace=<NAMESPACE> \
     --set=image.repository=<DOCKER_REPOSITORY_URL> \
-    --set=ingress.ext.host=<INGRESS_EXT_HOST> \
-    --set=ingress.int.host=<INGRESS_INT_HOST> \
-    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
-    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY> \
     --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL>
 ```
 
-If you want enable oauth2 in front of your service, run follow command
+### Include internal/external Ingress
+
+If you configured ingress controllers in your kubernetes cluster for intranet and extranet access, 
+then append the following parameters to enable their usage:
 
 ```bash
-helm install my-release <HELM_CHART_REPO_REF>\
-    --namespace=<NAMESPACE> \
-    --set=image.repository=<DOCKER_REPOSITORY_URL> \
+    --set=ingress.ext.enabled=true \
     --set=ingress.ext.host=<INGRESS_EXT_HOST> \
+    --set=ingress.int.enabled=true \
     --set=ingress.int.host=<INGRESS_INT_HOST> \
     --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
-    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY> \
-    --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL> \
-    --set=oauth2.enabled="true" \
-    --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID> \
-    --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL> \
-    --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI> \
-    --set=oauth2.config.OIDC_SSL_VERIFY=<OIDC_SSL_VERIFY> \
-    --set=oauth2.config.AUTH_TYPE=<AUTH_TYPE> \
-    --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL> \
-    --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
-    --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
-    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>    
+    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY>
 ```
 
-If you want enable oauth2 with session-cache in front of your service, run follow command
+Note that `tls.cert.int.secret.crt` and `tls.cert.int.secret.key` which will be stored as Kubernetes Secrets need to be already base64 encrypted at this point.
+
+### Include Oauth2 Authentication
+
+If you want to add oauth2 as sidecar in front of your service, append the follow parameters:
+
 ```bash
-helm install my-release <HELM_CHART_REPO_REF>\
-    --namespace=<NAMESPACE> \
-    --set=image.repository=<DOCKER_REPOSITORY_URL> \
-    --set=ingress.ext.host=<INGRESS_EXT_HOST> \
-    --set=ingress.int.host=<INGRESS_INT_HOST> \
-    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
-    --set=tls.cert.int.secret.key=<INGRESS_INT_KEY> \
-    --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL> \
     --set=oauth2.enabled="true" \
     --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID> \
     --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL> \
@@ -78,12 +66,33 @@ helm install my-release <HELM_CHART_REPO_REF>\
     --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL> \
     --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
     --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
-    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>    
+    --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>
+```
+
+Note that `oauth2.secret.*` values will be base64 encoded while creating the Kubernetes Secrets, so there is no need to pre-encrypt them
+
+### Include Redis Session-Cache for Oauth2
+
+If you want to use redis as session-cache for the auth-sidecar container, append the follow parameters
+You also need to configure and enable oauth2 parameters (see Include Oauth2 Authentication).
+
+```bash
     --set=oauth2.cache.SESSION_STORAGE=<SESSION_STORAGE> \
     --set=oauth2.cache.SESSION_STORAGE_HOST=<SESSION_STORAGE_HOST> \
     --set=oauth2.cache.SESSION_STORAGE_PORT=<SESSION_STORAGE_PORT> \
     --set=oauth2.secret.SESSION_SECRET=<SESSION_SECRET>
 ```
+
+### Include DataDog Monitoring
+
+Finally if you like to add DataDog Monitoring for the included service append the following parameters:
+
+```bash
+    --set=datadog.enabled=true
+    --set=datadog.source.service="java"
+```
+
+### Variable Definitions
 
 - `NAMESPACE` = Name of an existing namespace where to deploy the service.
 - `DOCKER_REPOSITORY_URL` = URL of docker registry to pull image from.
@@ -92,7 +101,6 @@ helm install my-release <HELM_CHART_REPO_REF>\
 - `INGRESS_INT_CRT` = Certificate for TLS configuration of internal Ingress Controller
 - `INGRESS_INT_KEY` = Certificate's key for TLS configuration of internal Ingress Controller
 - `READINESS_ENDPOINT_URL` = The endpoint URL of your service which should be used for the readiness probe, i.e. `/api/v1/status`
-
 - `OIDC_CLIENT_ID` = Client ID (get from Identity Provider)
 - `OIDC_DISCOVERY_URL` = URL from IDP Authentication
 - `OIDC_REDIRECT_URI` = Redirect URL
@@ -107,9 +115,32 @@ helm install my-release <HELM_CHART_REPO_REF>\
 - `SESSION_STORAGE_PORT` = Cache System Port Number
 - `SESSION_SECRET` = Session Secret
 
-This command deploys a default service on an AWS EKS cluster in the provided namespace.
 
 See the [configuration](#Configuration) section for a detailed overview of parameters.
+
+### Define additional parameters for deployed services
+
+Sometimes the deployed service needs some extra parameters or secrets to run. In such cases an additional ConfigMap or Secret will be created to pass the necessary values to the container as environmental variables. To do that you can include a supplementary values.yaml file in your own project and format it like in the code snippet below:
+
+```
+additionalparameters:
+  configMapApplied: true # flag to tell a configmap is defined
+  secretsMapApplied: true # flag to tell secrets are defined
+  config:
+    <PARAM_NAME>: <PARAM_VALUE>
+    <PARAM_NAME2>: <PARAM_VALUE2>
+    ...
+  secret:
+    <SECRET_NAME>: <SECRET_VALUE>
+    ...
+```
+
+You can then call the chart by passing the additional values.yaml as command line argument:
+```
+helm install <SERVICE_NAME> -f values.yaml
+```
+
+All secret values defined in this file will be base64 encoded while creating the Kubernetes Secrets, so there is no need to pre-encrypt them.
 
 ## Uninstall the chart
 
@@ -134,16 +165,16 @@ The chart can be executed with following parameters:
 | ingress.int.enabled           | Enables the configuration of an internal ingress route reachable from the intranet. | `false` |
 | ingress.int.host              | A valid DNS name for exposing an ingress route for private access. `NOTE`: This is only relevant if `ingress.int.enabled=true` | `my-service.<AWS_REGION>.cloud.bmw` |
 | project.includeAwsCredentials | If AWS credentials need to be provided for using other AWS services internally set this flag to `true`. When set to `true` then `secret.aws_accesskey` and `secret.aws_secretkey` need to be provided as well. | `true` if AWS credentials should be included, `false` is the default.|
-| secret.aws_accesskey          | It might be necessary to additionally pass the AWS Access Key when using internal AWS services from within your application.  |  AWS Access Key generated for your user  |
-| secret.aws_secretkey          | It might be necessary to additionally pass the AWS Secret Key when using internal AWS services from within your application.  |  AWS Secret Key generated for your user  |
+| secret.aws_accesskey          | It might be necessary to additionally pass the AWS Access Key when using internal AWS services from within your application. Must be base64 pre-encrypted |  AWS Access Key generated for your user  |
+| secret.aws_secretkey          | It might be necessary to additionally pass the AWS Secret Key when using internal AWS services from within your application. Must be base64 pre-encrypted |  AWS Secret Key generated for your user  |
 | resources.limits.cpu          | Total amount of CPU time that a container can use every 100 ms. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage.| `200m` |
 | resources.limits.memory       | The memory limit for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `235M` |
 | resources.requests.cpu        | Fractional amount of CPU allowed for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage.| `150m` |
 | resources.requests.memory     | Amount of memory reserved for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `200M` |
 | containers.readinessProbe.httpGet.path  | The endpoint URL of your service which should be used for the readiness probe in the K8S cluster| `/api/v1/status` |
 | tls.issuer.spec.acme.email    | A valid e-mail address where letsencrypt may send notifications to regarding certificate requests, renewals, etc.| `your-email@company.com` |
-| tls.cert.int.secret.crt       | When using the internal Ingress Controller it is necessary to provide a Certificate issued by your company. `NOTE`: This is only relevant if `ingress.int.enabled=true`| `PATH TO LOCAL ISSUED CERTIFICATE` |
-| tls.cert.int.secret.key       | In addition to the Certificate its private key needs to be provided. `NOTE`: This is only relevant if `ingress.int.enabled=true`| `PATH TO CERTIFICATE'S PRIVATE KEY` |
+| tls.cert.int.secret.crt       | When using the internal Ingress Controller it is necessary to provide a Certificate issued by your company. `NOTE`: This is only relevant if `ingress.int.enabled=true`. It must be base64 pre-encrypted | `PATH TO LOCAL ISSUED CERTIFICATE` |
+| tls.cert.int.secret.key       | In addition to the Certificate its private key needs to be provided. `NOTE`: This is only relevant if `ingress.int.enabled=true`. It must be base64 pre-encrypted | `PATH TO CERTIFICATE'S PRIVATE KEY` |
 | autoscaling.minReplicas       | Minimum amount of replicas the HPA is allowed for downscaling. | `2` |
 | autoscaling.maxReplicas       | Maximum amount of replicas the HPA is allowed for upscaling. | `10` |
 | autoscaling.metrics.resource.cpu.targetAverageUtilization | Threshold in percent for CPU usage. Once this value has been reached a new POD will be created. | `80` |
@@ -169,6 +200,8 @@ The chart can be executed with following parameters:
 | oauth2.cache.SESSION_STORAGE_HOST | Hostname (FQDN) or IP Address of the session cache server/cluster | `127.0.0.1` |
 | oauth2.cache.SESSION_STORAGE_PORT | Port Number | `6379` |
 | oauth2.cache.SESSION_SECRET | Session secret | `11111111aaaaaaaaabbbbbbCCCCCDDDDD` |
+| datadog.enabled | `true` if DataDog annotations should be used, `false` otherwise | `false` |
+| datadog.source.service| The name of the DataDog source the service should be instrumented with. | `java` |
 
 ## Testing Horizontal Pod Autoscaling
 In order to test the Pod Autoscaler with your deployed service do the following:
