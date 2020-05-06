@@ -162,6 +162,24 @@ spec:
             - name: "DD_SERVICE_NAME"
               value: {{ include "service.name" . }}
             {{- end}}
+            {{- if .Values.additionalparameters.configMapApplied }}
+            {{- range $key, $value := .Values.additionalparameters.config }}
+            - name: "{{$key}}"
+              valueFrom:
+                configMapKeyRef:
+                  name:  additional-parametes
+                  key: {{$key}}
+            {{- end}}
+            {{- end}}
+            {{- if .Values.additionalparameters.secretsApplied }}
+            {{- range $key, $value := .Values.additionalparameters.secrets }}
+            - name: "{{$key}}"
+              valueFrom:
+                secretKeyRef:
+                  name:  additional-secrets
+                  key: {{$key}}
+            {{- end}}
+            {{- end}}
           readinessProbe:
             httpGet:
               path: {{ .Values.containers.readinessProbe.httpGet.path }}

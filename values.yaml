@@ -156,3 +156,14 @@ datadog:
   source:
     service:
     sidecar: nginx
+
+#-------------------------------------#
+# Extension param value section       #
+#-------------------------------------#
+additionalparameters:
+  configMapApplied: false
+  secretsApplied: false
+  config:
+    PLACEHOLDER: "placeholder"
+  secrets:
+    PLACEHOLDER: "placeholder"
