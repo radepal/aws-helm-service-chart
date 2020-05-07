@@ -7,8 +7,10 @@ data:
   {{- range $key, $value := .Values.oauth2.config }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
+  {{- range $key, $value := .Values.oauth2.cache }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
 {{- end }}
-
 ---
 {{- if .Values.additionalparameters.configMapApplied}}
 apiVersion: v1

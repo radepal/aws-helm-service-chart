@@ -105,6 +105,30 @@ spec:
                 configMapKeyRef:
                   name: auth-sidecar
                   key: AUTH_TYPE
+
+            - name: "SESSION_STORAGE"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE
+
+            - name: "SESSION_STORAGE_HOST"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE_HOST
+
+            - name: "SESSION_STORAGE_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE_PORT
+
+            - name: "SESSION_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_SECRET            
             {{- if .Values.datadog.enabled }}
             - name: "ENABLE_DATADOG"
               value: {{ quote .Values.datadog.enabled }}

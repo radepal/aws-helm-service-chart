@@ -42,11 +42,11 @@ If you configured ingress controllers in your kubernetes cluster for intranet an
 then append the following parameters to enable their usage:
 
 ```bash
-    --set=ingress.ext.enabled=true 
-    --set=ingress.ext.host=<INGRESS_EXT_HOST>
-    --set=ingress.int.enabled=true
-    --set=ingress.int.host=<INGRESS_INT_HOST>
-    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT>
+    --set=ingress.ext.enabled=true \
+    --set=ingress.ext.host=<INGRESS_EXT_HOST> \
+    --set=ingress.int.enabled=true \
+    --set=ingress.int.host=<INGRESS_INT_HOST> \
+    --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
     --set=tls.cert.int.secret.key=<INGRESS_INT_KEY>
 ```
 
@@ -57,19 +57,31 @@ Note that `tls.cert.int.secret.crt` and `tls.cert.int.secret.key` which will be 
 If you want to add oauth2 as sidecar in front of your service, append the follow parameters:
 
 ```bash
-    --set=oauth2.enabled="true"
-    --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID>
-    --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL>
-    --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI>
-    --set=oauth2.config.OIDC_SSL_VERIFY=<OIDC_SSL_VERIFY>
-    --set=oauth2.config.AUTH_TYPE=<AUTH_TYPE>
-    --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL>
-    --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY>
-    --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE}
+    --set=oauth2.enabled="true" \
+    --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID> \
+    --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL> \
+    --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI> \
+    --set=oauth2.config.OIDC_SSL_VERIFY=<OIDC_SSL_VERIFY> \
+    --set=oauth2.config.AUTH_TYPE=<AUTH_TYPE> \
+    --set=oauth2.config.LOG_LEVEL=<LOG_LEVEL> \
+    --set=oauth2.sidecar.image.repository=<SIDECAR_REPOSITORY> \
+    --set=oauth2.sidecar.image.name=<SIDECAR_IMAGE} \
     --set=oauth2.sidecar.image.tag=<SIDECAR_TAG>
 ```
 
 Note that `oauth2.secret.*` values will be base64 encoded while creating the Kubernetes Secrets, so there is no need to pre-encrypt them
+
+### Include Redis Session-Cache for Oauth2
+
+If you want to use redis as session-cache for the auth-sidecar container, append the follow parameters
+You also need to configure and enable oauth2 parameters (see Include Oauth2 Authentication).
+
+```bash
+    --set=oauth2.cache.SESSION_STORAGE=<SESSION_STORAGE> \
+    --set=oauth2.cache.SESSION_STORAGE_HOST=<SESSION_STORAGE_HOST> \
+    --set=oauth2.cache.SESSION_STORAGE_PORT=<SESSION_STORAGE_PORT> \
+    --set=oauth2.secret.SESSION_SECRET=<SESSION_SECRET>
+```
 
 ### Include DataDog Monitoring
 
@@ -98,6 +110,10 @@ Finally if you like to add DataDog Monitoring for the included service append th
 - `SIDECAR_REPOSITORY` = Repostory of Oauth2 Container Image
 - `SIDECAR_IMAGE` = Name of Oauth2 Container Image
 - `SIDECAR_TAG` = Container Image Tag
+- `SESSION_STORAGE` = Define the cache storage
+- `SESSION_STORAGE_HOST` = Cache System Hostname/IP Address
+- `SESSION_STORAGE_PORT` = Cache System Port Number
+- `SESSION_SECRET` = Session Secret
 
 
 See the [configuration](#Configuration) section for a detailed overview of parameters.
@@ -180,6 +196,10 @@ The chart can be executed with following parameters:
 | oauth2.config.TARGET_PORT | Port of the actual service behind this auth sidcar within the same pod | `8080` |
 | oauth2.config.LOG_LEVEL | Log level of the auth-sidecar reverse Proxy | `info` |
 | oauth2.config.AUTH_TYPE | Client Authentication Type (UI/BACKEND) | `UI` |
+| oauth2.cache.SESSION_STORAGE | Name of the storage system, currently only cookie and redis are available, default is cookie | `redis` |
+| oauth2.cache.SESSION_STORAGE_HOST | Hostname (FQDN) or IP Address of the session cache server/cluster | `127.0.0.1` |
+| oauth2.cache.SESSION_STORAGE_PORT | Port Number | `6379` |
+| oauth2.cache.SESSION_SECRET | Session secret | `11111111aaaaaaaaabbbbbbCCCCCDDDDD` |
 | datadog.enabled | `true` if DataDog annotations should be used, `false` otherwise | `false` |
 | datadog.source.service| The name of the DataDog source the service should be instrumented with. | `java` |
 
