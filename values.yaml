@@ -42,7 +42,7 @@ oauth2:
     # Authentication Type (UI/BACKEND)
     AUTH_TYPE: "UI"
   cache:
-    # Enable or disable Session Cache
+    # Set Session Cache Storage (cookie/redis)
     SESSION_STORAGE: "cookie"
     # Session Storage Hostname/IP Address, reachable service inside Kubernetes
     SESSION_STORAGE_HOST: ""
