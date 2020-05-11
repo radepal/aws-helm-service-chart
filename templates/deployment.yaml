@@ -105,6 +105,30 @@ spec:
                 configMapKeyRef:
                   name: auth-sidecar
                   key: AUTH_TYPE
+
+            - name: "SESSION_STORAGE"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE
+
+            - name: "SESSION_STORAGE_HOST"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE_HOST
+
+            - name: "SESSION_STORAGE_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE_PORT
+
+            - name: "SESSION_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_SECRET            
             {{- if .Values.datadog.enabled }}
             - name: "ENABLE_DATADOG"
               value: {{ quote .Values.datadog.enabled }}
@@ -161,6 +185,24 @@ spec:
                   fieldPath: status.hostIP
             - name: "DD_SERVICE_NAME"
               value: {{ include "service.name" . }}
+            {{- end}}
+            {{- if .Values.additionalparameters.configMapApplied }}
+            {{- range $key, $value := .Values.additionalparameters.config }}
+            - name: "{{$key}}"
+              valueFrom:
+                configMapKeyRef:
+                  name:  additional-parametes
+                  key: {{$key}}
+            {{- end}}
+            {{- end}}
+            {{- if .Values.additionalparameters.secretsApplied }}
+            {{- range $key, $value := .Values.additionalparameters.secrets }}
+            - name: "{{$key}}"
+              valueFrom:
+                secretKeyRef:
+                  name:  additional-secrets
+                  key: {{$key}}
+            {{- end}}
             {{- end}}
           readinessProbe:
             httpGet:

@@ -7,4 +7,18 @@ data:
   {{- range $key, $value := .Values.oauth2.config }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
+  {{- range $key, $value := .Values.oauth2.cache }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+---
+{{- if .Values.additionalparameters.configMapApplied}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: additional-parametes
+data:
+  {{- range $key, $value := .Values.additionalparameters.config }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
 {{- end }}
