@@ -48,6 +48,8 @@ oauth2:
     SESSION_STORAGE_HOST: ""
     # Port from Session Storage Server/Service
     SESSION_STORAGE_PORT: ""
+    # Time To Live for the Redis Key Expire
+    SESSION_STORAGE_CACHE_TTL: "7200"
 
 project:
   includeAwsCredentials: false
