@@ -48,6 +48,8 @@ then append the following parameters to enable their usage:
     --set=tls.cert.int.secret.key=<INGRESS_INT_KEY>
 ```
 
+Note that `tls.cert.int.secret.crt` and `tls.cert.int.secret.key` which will be stored as Kubernetes Secrets need to be already base64 encrypted at this point.
+
 ### Include Oauth2 Authentication
 
 If you want to add oauth2 as sidecar in front of your service, append the follow parameters:
