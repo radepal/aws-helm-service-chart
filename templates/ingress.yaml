@@ -3,8 +3,9 @@
 {{- $ingressIntPath := .Values.ingress.int.path -}}
 {{- $ingressIntServicePort := .Values.ingress.int.servicePort -}}
 {{- $serviceName := include "service.name" . -}}
+{{- $ingressType := include "ingress.type" . -}}
 
-{{- if .Values.ingress.ext.enabled }}
+{{- if or (eq $ingressType "public") (eq $ingressType "both") }}
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -32,7 +33,7 @@ spec:
 
 {{- end }}
 
-{{- if .Values.ingress.int.enabled }}
+{{- if or (eq $ingressType "private") (eq $ingressType "both") }}
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -56,4 +57,4 @@ spec:
             backend:
               serviceName: {{ $serviceName }}-svc
               servicePort: {{ $ingressIntServicePort }}
-  {{- end }}
+{{- end }}

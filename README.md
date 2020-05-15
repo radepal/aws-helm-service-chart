@@ -42,9 +42,7 @@ If you configured ingress controllers in your kubernetes cluster for intranet an
 then append the following parameters to enable their usage:
 
 ```bash
-    --set=ingress.ext.enabled=true \
     --set=ingress.ext.host=<INGRESS_EXT_HOST> \
-    --set=ingress.int.enabled=true \
     --set=ingress.int.host=<INGRESS_INT_HOST> \
     --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
     --set=tls.cert.int.secret.key=<INGRESS_INT_KEY>
@@ -160,9 +158,7 @@ The chart can be executed with following parameters:
 | :---------------------------- |:--------------| :-----   |
 | namespace                     | The name of an existing namespace the service should be deployed to. | `default` |
 | image.repository              | The name of the AWS ECR image repository to deploy artifacts to. The repository url needs to be provided in the following form: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<REPOSITORY_NAME> | `111122223333.dkr.ecr.eu-west-1.amazonaws.com/my-repo` |
-| ingress.ext.enabled           | Enables the configuration of an external ingress route reachable from the internet. | `false` |
-| ingress.ext.host              | A valid DNS name for exposing an ingress route for public access. `NOTE`: This is only relevant if `ingress.ext.enabled=true`| `my-service.<AWS_REGION>.bmw.cloud` |
-| ingress.int.enabled           | Enables the configuration of an internal ingress route reachable from the intranet. | `false` |
+| ingress.ext.host              | A valid DNS name for exposing an ingress route for public access. `NOTE`: This is only relevant if your K8S dev namespace is labeled `public`. | `my-service.<AWS_REGION>.bmw.cloud` |
 | ingress.int.host              | A valid DNS name for exposing an ingress route for private access. `NOTE`: This is only relevant if `ingress.int.enabled=true` | `my-service.<AWS_REGION>.cloud.bmw` |
 | project.includeAwsCredentials | If AWS credentials need to be provided for using other AWS services internally set this flag to `true`. When set to `true` then `secret.aws_accesskey` and `secret.aws_secretkey` need to be provided as well. | `true` if AWS credentials should be included, `false` is the default.|
 | secret.aws_accesskey          | It might be necessary to additionally pass the AWS Access Key when using internal AWS services from within your application. Must be base64 pre-encrypted |  AWS Access Key generated for your user  |
@@ -173,8 +169,8 @@ The chart can be executed with following parameters:
 | resources.requests.memory     | Amount of memory reserved for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `200M` |
 | containers.readinessProbe.httpGet.path  | The endpoint URL of your service which should be used for the readiness probe in the K8S cluster| `/api/v1/status` |
 | tls.issuer.spec.acme.email    | A valid e-mail address where letsencrypt may send notifications to regarding certificate requests, renewals, etc.| `your-email@company.com` |
-| tls.cert.int.secret.crt       | When using the internal Ingress Controller it is necessary to provide a Certificate issued by your company. `NOTE`: This is only relevant if `ingress.int.enabled=true`. It must be base64 pre-encrypted | `PATH TO LOCAL ISSUED CERTIFICATE` |
-| tls.cert.int.secret.key       | In addition to the Certificate its private key needs to be provided. `NOTE`: This is only relevant if `ingress.int.enabled=true`. It must be base64 pre-encrypted | `PATH TO CERTIFICATE'S PRIVATE KEY` |
+| tls.cert.int.secret.crt       | When using the internal Ingress Controller it is necessary to provide a Certificate issued by your company. `NOTE`: This is only relevant if your K8S dev namespace is labeled `private`. It must be base64 pre-encrypted. | `LOCAL ISSUED CERTIFICATE` |
+| tls.cert.int.secret.key       | In addition to the Certificate its private key needs to be provided. It must be base64 pre-encrypted.| `CERTIFICATE'S PRIVATE KEY` |
 | autoscaling.minReplicas       | Minimum amount of replicas the HPA is allowed for downscaling. | `2` |
 | autoscaling.maxReplicas       | Maximum amount of replicas the HPA is allowed for upscaling. | `10` |
 | autoscaling.metrics.resource.cpu.targetAverageUtilization | Threshold in percent for CPU usage. Once this value has been reached a new POD will be created. | `80` |
