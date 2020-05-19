@@ -124,11 +124,24 @@ spec:
                   name: auth-sidecar
                   key: SESSION_STORAGE_PORT
 
+            - name: "SESSION_STORAGE_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE_PASSWORD            
+
+            - name: "SESSION_STORAGE_CACHE_TTL"
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-sidecar
+                  key: SESSION_STORAGE_CACHE_TTL            
+
             - name: "SESSION_SECRET"
               valueFrom:
                 secretKeyRef:
                   name: auth-sidecar
                   key: SESSION_SECRET            
+
             {{- if .Values.datadog.enabled }}
             - name: "ENABLE_DATADOG"
               value: {{ quote .Values.datadog.enabled }}

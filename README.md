@@ -111,6 +111,8 @@ Finally if you like to add DataDog Monitoring for the included service append th
 - `SESSION_STORAGE` = Define the cache storage
 - `SESSION_STORAGE_HOST` = Cache System Hostname/IP Address
 - `SESSION_STORAGE_PORT` = Cache System Port Number
+- `SESSION_STORAGE_PASSWORD` = Cache System Authentication Password
+- `SESSION_STORAGE_CACHE_TTL` = Redis Key Expire TTL
 - `SESSION_SECRET` = Session Secret
 
 
@@ -195,7 +197,9 @@ The chart can be executed with following parameters:
 | oauth2.cache.SESSION_STORAGE | Name of the storage system, currently only cookie and redis are available, default is cookie | `redis` |
 | oauth2.cache.SESSION_STORAGE_HOST | Hostname (FQDN) or IP Address of the session cache server/cluster | `127.0.0.1` |
 | oauth2.cache.SESSION_STORAGE_PORT | Port Number | `6379` |
-| oauth2.cache.SESSION_SECRET | Session secret | `11111111aaaaaaaaabbbbbbCCCCCDDDDD` |
+| oauth2.cache.SESSION_STORAGE_CACHE_TTL | Redis Expire TTL Value in seconds (default 2h) | `7200` |
+| oauth2.secret.SESSION_STORAGE_PASSWORD | Redis AUTH Password | `SECURE-PASSWORD-FOR-REDIS-AUTH` |
+| oauth2.secret.SESSION_SECRET | Session secret | `11111111aaaaaaaaabbbbbbCCCCCDDDDD` |
 | datadog.enabled | `true` if DataDog annotations should be used, `false` otherwise | `false` |
 | datadog.source.service| The name of the DataDog source the service should be instrumented with. | `java` |
 
