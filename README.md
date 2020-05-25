@@ -32,8 +32,9 @@ Run the chart if you only want to deploy your service without any further depend
 ```bash
 helm install my-release <HELM_CHART_REPO_REF>\
     --namespace=<NAMESPACE> \
-    --set=image.repository=<DOCKER_REPOSITORY_URL> \
-    --set=containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL>
+    --set=deployment.spec.image.repository=<DOCKER_REPOSITORY_URL> \
+    --set=deployment.spec.serviceAccountName=<SERVICE_ACCOUNT_NAME> \
+    --set=deployment.spec.containers.readinessProbe.httpGet.path=<READINESS_ENDPOINT_URL>
 ```
 
 ### Include internal/external Ingress
@@ -93,6 +94,7 @@ Finally if you like to add DataDog Monitoring for the included service append th
 ### Variable Definitions
 
 - `NAMESPACE` = Name of an existing namespace where to deploy the service.
+- `SERVICE_ACCOUNT_NAME` = Name of the K8S Service Account a POD should use
 - `DOCKER_REPOSITORY_URL` = URL of docker registry to pull image from.
 - `INGRESS_EXT_HOST` = DNS name of the service under which the external ingress should expose this service to the public
 - `INGRESS_INT_HOST` = DNS name of the service under which the internal ingress should expose this service to the corporate network
@@ -157,17 +159,18 @@ The chart can be executed with following parameters:
 | Parameter                     | Description   | Example  |
 | :---------------------------- |:--------------| :-----   |
 | namespace                     | The name of an existing namespace the service should be deployed to. | `default` |
-| image.repository              | The name of the AWS ECR image repository to deploy artifacts to. The repository url needs to be provided in the following form: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<REPOSITORY_NAME> | `111122223333.dkr.ecr.eu-west-1.amazonaws.com/my-repo` |
+| deployment.spec.serviceAccountName | The K8S Service Account a Pod should use. | `default` |
+| deployment.spec.image.repository | The name of the AWS ECR image repository to deploy artifacts to. The repository url needs to be provided in the following form: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<REPOSITORY_NAME> | `111122223333.dkr.ecr.eu-west-1.amazonaws.com/my-repo` |
 | ingress.ext.host              | A valid DNS name for exposing an ingress route for public access. `NOTE`: This is only relevant if your K8S dev namespace is labeled `public`. | `my-service.<AWS_REGION>.bmw.cloud` |
 | ingress.int.host              | A valid DNS name for exposing an ingress route for private access. `NOTE`: This is only relevant if `ingress.int.enabled=true` | `my-service.<AWS_REGION>.cloud.bmw` |
 | project.includeAwsCredentials | If AWS credentials need to be provided for using other AWS services internally set this flag to `true`. When set to `true` then `secret.aws_accesskey` and `secret.aws_secretkey` need to be provided as well. | `true` if AWS credentials should be included, `false` is the default.|
 | secret.aws_accesskey          | It might be necessary to additionally pass the AWS Access Key when using internal AWS services from within your application. Must be base64 pre-encrypted |  AWS Access Key generated for your user  |
 | secret.aws_secretkey          | It might be necessary to additionally pass the AWS Secret Key when using internal AWS services from within your application. Must be base64 pre-encrypted |  AWS Secret Key generated for your user  |
-| resources.limits.cpu          | Total amount of CPU time that a container can use every 100 ms. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage.| `200m` |
-| resources.limits.memory       | The memory limit for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `235M` |
-| resources.requests.cpu        | Fractional amount of CPU allowed for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage.| `150m` |
-| resources.requests.memory     | Amount of memory reserved for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `200M` |
-| containers.readinessProbe.httpGet.path  | The endpoint URL of your service which should be used for the readiness probe in the K8S cluster| `/api/v1/status` |
+| deployment.spec.resources.limits.cpu | Total amount of CPU time that a container can use every 100 ms. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage.| `200m` |
+| deployment.spec.resources.limits.memory | The memory limit for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `235M` |
+| deployment.spec.resources.requests.cpu | Fractional amount of CPU allowed for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage.| `150m` |
+| deployment.spec.resources.requests.memory | Amount of memory reserved for a Pod. See [Managing Compute Resources for Containers](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/) for a detailed description on resource usage. | `200M` |
+| deployment.spec.containers.readinessProbe.httpGet.path | The endpoint URL of your service which should be used for the readiness probe in the K8S cluster| `/api/v1/status` |
 | tls.issuer.spec.acme.email    | A valid e-mail address where letsencrypt may send notifications to regarding certificate requests, renewals, etc.| `your-email@company.com` |
 | tls.cert.int.secret.crt       | When using the internal Ingress Controller it is necessary to provide a Certificate issued by your company. `NOTE`: This is only relevant if your K8S dev namespace is labeled `private`. It must be base64 pre-encrypted. | `LOCAL ISSUED CERTIFICATE` |
 | tls.cert.int.secret.key       | In addition to the Certificate its private key needs to be provided. It must be base64 pre-encrypted.| `CERTIFICATE'S PRIVATE KEY` |
