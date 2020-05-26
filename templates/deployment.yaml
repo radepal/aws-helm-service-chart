@@ -4,7 +4,7 @@ metadata:
   name: {{ include "service.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.deployment.spec.replicas }}
   selector:
     matchLabels:
       app: {{ include "service.name" . }}
@@ -28,6 +28,7 @@ spec:
     spec:
       imagePullSecrets:
         - name: aws-ecr-secret
+      serviceAccountName: {{ .Values.deployment.spec.serviceAccountName }}
       containers:
     {{- if .Values.oauth2.enabled }}
         - name: {{ include "service.name" . }}-auth-sidecar
@@ -171,11 +172,11 @@ spec:
             successThreshold: 1
             failureThreshold: 3
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.deployment.spec.resources | nindent 12 }}
     {{- end }}
         - name: {{ include "service.name" . }}
           image: {{ include "image.url" . }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.deployment.spec.image.pullPolicy }}
           env:
             {{- if .Values.project.includeAwsCredentials }}
             - name: "AWS_ACCESS_KEY"
@@ -219,7 +220,7 @@ spec:
             {{- end}}
           readinessProbe:
             httpGet:
-              path: {{ .Values.containers.readinessProbe.httpGet.path }}
+              path: {{ .Values.deployment.spec.containers.readinessProbe.httpGet.path }}
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 5
@@ -229,12 +230,12 @@ spec:
             failureThreshold: 3
           resources:
             limits:
-              cpu: {{ .Values.resources.limits.cpu }}
-              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.deployment.spec.resources.limits.cpu }}
+              memory: {{ .Values.deployment.spec.resources.limits.memory }}
             requests:
-              cpu: {{ .Values.resources.requests.cpu }}
-              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.deployment.spec.resources.requests.cpu }}
+              memory: {{ .Values.deployment.spec.resources.requests.memory }}
           ports:
-            - containerPort: {{ .Values.connection.http.port }}
+            - containerPort: {{ .Values.deployment.spec.connection.http.port }}
               name: http
               protocol: TCP
