@@ -18,6 +18,8 @@ oauth2:
     OIDC_CLIENT_ID: ""
     # Session Secret 
     SESSION_SECRET: "!!Ex8mpl3-Rand0m-Secret-Dont-Use-In-Production!!"
+    # Authentication Password for redis
+    SESSION_STORAGE_PASSWORD: "!!Secure-Redis-Password!!"
   config:
     # Auto Config URL for OIDC Provider
     OIDC_DISCOVERY_URL: ""
@@ -48,6 +50,8 @@ oauth2:
     SESSION_STORAGE_HOST: ""
     # Port from Session Storage Server/Service
     SESSION_STORAGE_PORT: ""
+    # Time To Live for the Redis Key Expire
+    SESSION_STORAGE_CACHE_TTL: "7200"
 
 project:
   includeAwsCredentials: false
