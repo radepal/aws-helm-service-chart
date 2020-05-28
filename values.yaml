@@ -103,6 +103,7 @@ autoscaling:
 #----------------------------#
 
 ingress:
+  type: private
   ext:
     annotations:
       nginx.ingress.kubernetes.io/ssl-redirect: "false"

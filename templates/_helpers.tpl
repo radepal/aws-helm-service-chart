@@ -12,9 +12,5 @@
 {{- end -}}
 
 {{- define "ingress.type" -}}
-{{- range $key, $label := (lookup "v1" "Namespace" "" .Release.Namespace).metadata.labels }}
-{{- if eq $key "ingress" }}
-{{- printf "%s" $label -}}
+{{- printf "%s" .Values.ingress.type -}}
 {{- end }}
-{{- end }}
-{{- end -}}
