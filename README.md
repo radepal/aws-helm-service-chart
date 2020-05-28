@@ -43,7 +43,9 @@ If you configured ingress controllers in your kubernetes cluster for intranet an
 then append the following parameters to enable their usage:
 
 ```bash
+    --set=ingress.ext.enabled="true" \
     --set=ingress.ext.host=<INGRESS_EXT_HOST> \
+    --set=ingress.int.enabled="true" \
     --set=ingress.int.host=<INGRESS_INT_HOST> \
     --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
     --set=tls.cert.int.secret.key=<INGRESS_INT_KEY>
@@ -163,8 +165,10 @@ The chart can be executed with following parameters:
 | namespace                     | The name of an existing namespace the service should be deployed to. | `default` |
 | deployment.spec.serviceAccountName | The K8S Service Account a Pod should use. | `default` |
 | deployment.spec.image.repository | The name of the AWS ECR image repository to deploy artifacts to. The repository url needs to be provided in the following form: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<REPOSITORY_NAME> | `111122223333.dkr.ecr.eu-west-1.amazonaws.com/my-repo` |
-| ingress.ext.host              | A valid DNS name for exposing an ingress route for public access. `NOTE`: This is only relevant if your K8S dev namespace is labeled `public`. | `my-service.<AWS_REGION>.bmw.cloud` |
-| ingress.int.host              | A valid DNS name for exposing an ingress route for private access. `NOTE`: This is only relevant if `ingress.int.enabled=true` | `my-service.<AWS_REGION>.cloud.bmw` |
+| ingress.ext.enabled           | Set to `true` if a public (internet facing) ingress controller has been configured in your cluster. Default is set to `false`| `false` |
+| ingress.ext.host              | A valid DNS name for exposing an ingress route for public access. `ingress.ext.enabled` must be set to `true`| `my-service.<AWS_REGION>.bmw.cloud` |
+| ingress.int.enabled           | Set to `true` if a private (intranet facing) ingress controller has been configured in your cluster. Default is set to `false` | `false` |
+| ingress.int.host              | A valid DNS name for exposing an ingress route for private access. `ingress.int.enabled` must be set to `true`| `my-service.<AWS_REGION>.cloud.bmw` |
 | project.includeAwsCredentials | If AWS credentials need to be provided for using other AWS services internally set this flag to `true`. When set to `true` then `secret.aws_accesskey` and `secret.aws_secretkey` need to be provided as well. | `true` if AWS credentials should be included, `false` is the default.|
 | secret.aws_accesskey          | It might be necessary to additionally pass the AWS Access Key when using internal AWS services from within your application. Must be base64 pre-encrypted |  AWS Access Key generated for your user  |
 | secret.aws_secretkey          | It might be necessary to additionally pass the AWS Secret Key when using internal AWS services from within your application. Must be base64 pre-encrypted |  AWS Secret Key generated for your user  |
