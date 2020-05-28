@@ -3,11 +3,11 @@ entries:
   aws-helm-service-chart:
   - apiVersion: v1
     appVersion: "1.1"
-    created: "2020-05-28T09:14:09.869973+02:00"
+    created: "2020-05-28T09:29:06.824554+02:00"
     description: Helm chart for default microservice projects
-    digest: afd2f23e08564f5bf8e30d5800c2541491b5f8e0c5ad27b9e0d61ee4a3c17923
+    digest: e632c2b2800b6c39a73c4c17791a0405e3de8f1a48f1ce3ab4396bedf8fe5244
     name: aws-helm-service-chart
     urls:
     - https://github.com/DVPE-cloud/aws-helm-service-chart/releases/download/aws-helm-service-chart-1.9.3/aws-helm-service-chart-1.9.3.tgz
     version: 1.9.3
-generated: "2020-05-28T09:14:09.606662+02:00"
+generated: "2020-05-28T09:29:06.552862+02:00"
