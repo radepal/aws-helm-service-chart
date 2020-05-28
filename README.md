@@ -43,9 +43,9 @@ If you configured ingress controllers in your kubernetes cluster for intranet an
 then append the following parameters to enable their usage:
 
 ```bash
-    --set=ingress.ext.enabled="true" \
+    --set=ingress.ext.enabled=true \
     --set=ingress.ext.host=<INGRESS_EXT_HOST> \
-    --set=ingress.int.enabled="true" \
+    --set=ingress.int.enabled=true \
     --set=ingress.int.host=<INGRESS_INT_HOST> \
     --set=tls.cert.int.secret.crt=<INGRESS_INT_CRT> \
     --set=tls.cert.int.secret.key=<INGRESS_INT_KEY>
@@ -58,7 +58,7 @@ Note that `tls.cert.int.secret.crt` and `tls.cert.int.secret.key` which will be 
 If you want to add oauth2 as sidecar in front of your service, append the follow parameters:
 
 ```bash
-    --set=oauth2.enabled="true" \
+    --set=oauth2.enabled=true \
     --set=oauth2.secret.OIDC_CLIENT_ID=<OIDC_CLIENT_ID> \
     --set=oauth2.config.OIDC_DISCOVERY_URL=<OIDC_DISCOVERY_URL> \
     --set=oauth2.config.OIDC_REDIRECT_URI=<OIDC_REDIRECT_URI> \
