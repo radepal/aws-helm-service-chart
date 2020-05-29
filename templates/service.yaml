@@ -1,8 +1,10 @@
+{{- $serviceName := include "service.name" . -}}
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "service.name" . }}-svc
+  name: {{ $serviceName }}-svc
   namespace: {{ .Release.Namespace }}
 spec:
   type: {{ .Values.service.spec.type }}
@@ -16,4 +18,4 @@ spec:
       targetPort: {{ .Values.service.spec.ports.targetPort }}
 {{- end }}
   selector:
-    app: {{ include "service.name" . }}
+    app: {{ $serviceName }}
