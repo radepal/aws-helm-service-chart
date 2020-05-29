@@ -1,8 +1,10 @@
+{{- $serviceName := include "service.name" . -}}
+
 {{- if .Values.oauth2.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: auth-sidecar
+  name: {{ $serviceName }}-auth-sidecar
 data:
   {{- range $key, $value := .Values.oauth2.config }}
   {{ $key }}: {{ $value | quote }}
@@ -16,7 +18,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: additional-parametes
+  name: {{ $serviceName }}-additional-parametes
 data:
   {{- range $key, $value := .Values.additionalparameters.config }}
   {{ $key }}: {{ $value | quote }}
