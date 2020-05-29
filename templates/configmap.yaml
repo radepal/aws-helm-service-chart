@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: auth-sidecar
+  name: {{ include "service.name" . }}-auth-sidecar
 data:
   {{- range $key, $value := .Values.oauth2.config }}
   {{ $key }}: {{ $value | quote }}
@@ -16,7 +16,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: additional-parametes
+  name: {{ include "service.name" . }}-additional-parametes
 data:
   {{- range $key, $value := .Values.additionalparameters.config }}
   {{ $key }}: {{ $value | quote }}
