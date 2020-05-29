@@ -1,14 +1,17 @@
+{{- $serviceName := include "service.name" . -}}
+
+---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "service.name" . }}
+  name: {{ $serviceName }}
 spec:
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "service.name" . }}
+    name: {{ $serviceName }}
   metrics:
     - type: Resource
       resource:

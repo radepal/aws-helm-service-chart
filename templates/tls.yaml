@@ -1,15 +1,17 @@
+{{- $serviceName := include "service.name" . -}}
+
 ---
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
-  name: {{ include "service.name" . }}-letsencrypt-staging
+  name: {{ $serviceName }}-letsencrypt-staging
   namespace: {{ .Release.Namespace }}
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     email: {{ .Values.tls.issuer.spec.acme.email }}
     privateKeySecretRef:
-      name: {{ include "service.name" . }}-letsencrypt-staging
+      name: {{ $serviceName }}-letsencrypt-staging
     solvers:
       - http01:
           ingress:
@@ -19,14 +21,14 @@ spec:
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
-  name: {{ include "service.name" . }}-letsencrypt-prod
+  name: {{ $serviceName }}-letsencrypt-prod
   namespace: {{ .Release.Namespace }}
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
     email: {{ .Values.tls.issuer.spec.acme.email }}
     privateKeySecretRef:
-      name: {{ include "service.name" . }}-letsencrypt-prod
+      name: {{ $serviceName }}-letsencrypt-prod
     solvers:
       - http01:
           ingress:

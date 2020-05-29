@@ -1,28 +1,31 @@
+{{- $serviceName := include "service.name" . -}}
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "service.name" . }}
+  name: {{ $serviceName }}
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.deployment.spec.replicas }}
   selector:
     matchLabels:
-      app: {{ include "service.name" . }}
+      app: {{ $serviceName }}
   template:
     metadata:
       labels:
-        app: {{ include "service.name" . }}
+        app: {{ $serviceName }}
       {{- if .Values.datadog.enabled }}
       annotations:
-        ad.datadoghq.com/{{ include "service.name" . }}.check_names: '["{{ include "service.name" . }}"]'
-        ad.datadoghq.com/{{ include "service.name" . }}.init_configs: '[{}]'
-        ad.datadoghq.com/{{ include "service.name" . }}.logs: '[{"source":"{{ .Values.datadog.source.service }}", "service":"{{ include "service.name" . }}" }]'
-        ad.datadoghq.com/{{ include "service.name" . }}.tags: '{"team": "DVPE"}'
+        ad.datadoghq.com/{{ $serviceName }}.check_names: '["{{ $serviceName }}"]'
+        ad.datadoghq.com/{{ $serviceName }}.init_configs: '[{}]'
+        ad.datadoghq.com/{{ $serviceName }}.logs: '[{"source":"{{ .Values.datadog.source.service }}", "service":"{{ $serviceName }}" }]'
+        ad.datadoghq.com/{{ $serviceName }}.tags: '{"team": "DVPE"}'
         {{- if .Values.oauth2.enabled }}
-        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.check_names: '["{{ include "service.name" . }}-auth-sidecar"]'
-        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.init_configs: '[{}]'
-        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.logs: '[{"source":"{{ .Values.datadog.source.sidecar }}", "service":"{{ include "service.name" . }}-auth-sidecar" }]'
-        ad.datadoghq.com/{{ include "service.name" . }}-auth-sidecar.tags: '{"team": "DVPE"}'
+        ad.datadoghq.com/{{ $serviceName }}-auth-sidecar.check_names: '["{{ $serviceName }}-auth-sidecar"]'
+        ad.datadoghq.com/{{ $serviceName }}-auth-sidecar.init_configs: '[{}]'
+        ad.datadoghq.com/{{ $serviceName }}-auth-sidecar.logs: '[{"source":"{{ .Values.datadog.source.sidecar }}", "service":"{{ $serviceName }}-auth-sidecar" }]'
+        ad.datadoghq.com/{{ $serviceName }}-auth-sidecar.tags: '{"team": "DVPE"}'
         {{- end }}
       {{- end }}
     spec:
@@ -31,116 +34,116 @@ spec:
       serviceAccountName: {{ .Values.deployment.spec.serviceAccountName }}
       containers:
     {{- if .Values.oauth2.enabled }}
-        - name: {{ include "service.name" . }}-auth-sidecar
+        - name: {{ $serviceName }}-auth-sidecar
           image: "{{ .Values.oauth2.sidecar.image.repository }}/{{ .Values.oauth2.sidecar.image.name }}:{{ .Values.oauth2.sidecar.image.tag }}"
           imagePullPolicy: {{ .Values.oauth2.sidecar.image.pullPolicy }}
           env:
             - name: "OIDC_DISCOVERY_URL"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: OIDC_DISCOVERY_URL
 
             - name: "OIDC_REDIRECT_URI"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: OIDC_REDIRECT_URI
 
             - name: "OIDC_SCOPE"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: OIDC_SCOPE
 
             - name: "OIDC_CLIENT_ID"
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: OIDC_CLIENT_ID
 
             - name: "OIDC_TOKEN_ENDPOINT_AUTH_METHOD"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: OIDC_TOKEN_ENDPOINT_AUTH_METHOD
 
             - name: "OIDC_SSL_VERIFY"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: OIDC_SSL_VERIFY
 
             - name: "OIDC_TOKEN_EXPIRY_TIME"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: OIDC_TOKEN_EXPIRY_TIME
 
             - name: "OIDC_RENEW_ACCESS_TOKEN"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: OIDC_RENEW_ACCESS_TOKEN
 
             - name: "TARGET_HOST"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: TARGET_HOST
 
             - name: "TARGET_PORT"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: TARGET_PORT
 
             - name: "LOG_LEVEL"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: LOG_LEVEL
 
             - name: "AUTH_TYPE"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: AUTH_TYPE
 
             - name: "SESSION_STORAGE"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: SESSION_STORAGE
 
             - name: "SESSION_STORAGE_HOST"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: SESSION_STORAGE_HOST
 
             - name: "SESSION_STORAGE_PORT"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: SESSION_STORAGE_PORT
 
             - name: "SESSION_STORAGE_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: SESSION_STORAGE_PASSWORD
 
             - name: "SESSION_STORAGE_CACHE_TTL"
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: SESSION_STORAGE_CACHE_TTL
 
             - name: "SESSION_SECRET"
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "service.name" . }}-auth-sidecar
+                  name: {{ $serviceName }}-auth-sidecar
                   key: SESSION_SECRET
 
             {{- if .Values.datadog.enabled }}
@@ -151,7 +154,7 @@ spec:
                 fieldRef:
                   fieldPath: status.hostIP
             - name: "DD_SERVICE"
-              value: {{ include "service.name" . }}-auth-sidecar
+              value: {{ $serviceName }}-auth-sidecar
             {{- end}}
           ports:
             - name: http
@@ -174,7 +177,7 @@ spec:
           resources:
             {{- toYaml .Values.deployment.spec.resources | nindent 12 }}
     {{- end }}
-        - name: {{ include "service.name" . }}
+        - name: {{ $serviceName }}
           image: {{ include "image.url" . }}
           imagePullPolicy: {{ .Values.deployment.spec.image.pullPolicy }}
           env:
@@ -182,12 +185,12 @@ spec:
             - name: "AWS_ACCESS_KEY"
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "service.name" . }}-secret
+                  name: {{ $serviceName }}-secret
                   key: aws.accesskey
             - name: "AWS_SECRET_KEY"
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "service.name" . }}-secret
+                  name: {{ $serviceName }}-secret
                   key: aws.secretkey
             {{- end}}
             {{- if .Values.datadog.enabled }}
@@ -198,14 +201,14 @@ spec:
                 fieldRef:
                   fieldPath: status.hostIP
             - name: "DD_SERVICE_NAME"
-              value: {{ include "service.name" . }}
+              value: {{ $serviceName }}
             {{- end}}
             {{- if .Values.additionalparameters.configMapApplied }}
             {{- range $key, $value := .Values.additionalparameters.config }}
             - name: "{{$key}}"
               valueFrom:
                 configMapKeyRef:
-                  name:  {{ include "service.name" . }}-additional-parametes
+                  name:  {{ $serviceName }}-additional-parametes
                   key: {{$key}}
             {{- end}}
             {{- end}}
@@ -214,7 +217,7 @@ spec:
             - name: "{{$key}}"
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "service.name" . }}-additional-secrets
+                  name:  {{ $serviceName }}-additional-secrets
                   key: {{$key}}
             {{- end}}
             {{- end}}
