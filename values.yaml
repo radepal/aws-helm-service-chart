@@ -12,6 +12,7 @@ oauth2:
       name: "auth-sidecar"
       tag: "latest"
       pullPolicy: "Always"
+      pullSecrets: "aws-ecr-secret"
     servicePort: 8443
   secret:
     # Client ID
@@ -68,6 +69,7 @@ deployment:
       repository:
       tag: latest
       pullPolicy: Always
+      pullSecrets: aws-ecr-secret
     connection:
       http:
         port: 8080
